@@ -27,7 +27,7 @@ export function ExperienceItem({
         onClick={() => setIsOpen((open) => !open)}
       >
         <span className={styles.triggerMain}>
-          <span className={styles.logo}>
+          <span className={logo ? styles.logo : styles.logoPlaceholder}>
             {logo ? (
               <img className={styles.logoImg} src={logo} alt="" />
             ) : (
