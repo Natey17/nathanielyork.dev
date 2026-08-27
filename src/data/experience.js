@@ -5,6 +5,7 @@ export const EXPERIENCE = [
     company: "Kaleon",
     location: "Remote",
     dates: "Aug 2026 – Present",
+    logo: null,
     stack: null,
     bullets: [
       "Contribute across a 3-person engineering team building a transfer-planning platform helping community college students plan degree and transfer pathways",
@@ -18,6 +19,7 @@ export const EXPERIENCE = [
     company: "Design Hub at American River College",
     location: "Carmichael, CA",
     dates: "Sep 2024 – May 2025",
+    logo: null,
     stack: ["C++", "Google App Scripts"],
     bullets: [
       "Developed and deployed a Discord bot automating server management and Google Drive organization for 200+ users",

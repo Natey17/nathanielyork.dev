@@ -9,6 +9,7 @@ export function ExperienceItem({
   company,
   location,
   dates,
+  logo,
   stack,
   bullets,
   defaultOpen = false,
@@ -25,15 +26,24 @@ export function ExperienceItem({
         aria-controls={panelId}
         onClick={() => setIsOpen((open) => !open)}
       >
-        <span className={styles.triggerText}>
-          <span className={styles.role}>
-            {role} <span className={styles.company}>— {company}</span>
+        <span className={styles.triggerMain}>
+          <span className={styles.logo}>
+            {logo ? (
+              <img className={styles.logoImg} src={logo} alt="" />
+            ) : (
+              <span aria-hidden="true">{company.charAt(0)}</span>
+            )}
           </span>
-          <span className={styles.meta}>
-            {location} · {dates}
+          <span className={styles.triggerText}>
+            <span className={styles.company}>{company}</span>
+            <span className={styles.role}>{role}</span>
+            <span className={styles.location}>{location}</span>
           </span>
         </span>
-        <ChevronIcon open={isOpen} />
+        <span className={styles.metaGroup}>
+          <span className={styles.meta}>{dates}</span>
+          <ChevronIcon open={isOpen} />
+        </span>
       </button>
       <motion.div
         id={panelId}
