@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Edgeine — statistical edge discovery</title>
+<meta name="description" content="A research engine that tests whether a trading idea actually holds up statistically — or correctly proves it doesn't." />
+<style>
+/* Industry — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700&family=Barlow+Condensed:wght@400;600&display=swap');
+
+:root {
+  --color-bg: #f2f2f3;
+  --color-surface: #e9e9ea;
+  --color-text: #1d1f20;
+  --color-accent: #5980a6;
+  --color-accent-2: #728fab;
+  --color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f5f5f8;
+  --color-neutral-200: #e7e7ea;
+  --color-neutral-300: #d4d4d7;
+  --color-neutral-400: #b7b7ba;
+  --color-neutral-500: #98989b;
+  --color-neutral-600: #7a7a7d;
+  --color-neutral-700: #5d5d60;
+  --color-neutral-800: #424244;
+  --color-neutral-900: #2b2b2d;
+
+  --color-accent-100: #eef6ff;
+  --color-accent-200: #d6ebff;
+  --color-accent-300: #b5d9fd;
+  --color-accent-400: #94bce3;
+  --color-accent-500: #749dc4;
+  --color-accent-600: #597ea3;
+  --color-accent-700: #416180;
+  --color-accent-800: #2c455d;
+  --color-accent-900: #1d2d3d;
+
+  --color-accent-2-100: #eef6ff;
+  --color-accent-2-200: #d6ebff;
+  --color-accent-2-300: #bdd8f2;
+  --color-accent-2-400: #9ebbd8;
+  --color-accent-2-500: #7e9cb8;
+  --color-accent-2-600: #627d98;
+  --color-accent-2-700: #486077;
+  --color-accent-2-800: #314457;
+  --color-accent-2-900: #1f2d3a;
+
+  --font-heading: "Barlow Condensed", system-ui, sans-serif;
+  --font-heading-weight: 600;
+  --font-body: "Barlow", system-ui, sans-serif;
+
+  --space-1: 3.4px;
+  --space-2: 6.8px;
+  --space-3: 10.2px;
+  --space-4: 13.6px;
+  --space-6: 20.4px;
+  --space-8: 27.2px;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 7px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2b2b2d 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.blueprint {
+  position: relative;
+  border: 1px solid var(--color-divider);
+  border-radius: 0;
+}
+/* The overlay image treatments (halftone, duotone) clip their overlay
+   (overflow:hidden); a blueprint wrapper draws its registration marks
+   outside the box, so when both classes share a wrapper the frame must
+   win. */
+.blueprint.halftone, .blueprint.plate, .blueprint.duotone { overflow: visible; }
+.blueprint > .corner {
+  position: absolute; width: 11px; height: 11px;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.blueprint > .corner::before, .blueprint > .corner::after {
+  content: ""; position: absolute; background: currentColor;
+}
+.blueprint > .corner::before { left: 5px; top: 0; width: 1px; height: 100%; }
+.blueprint > .corner::after  { top: 5px; left: 0; width: 100%; height: 1px; }
+.blueprint > .corner.tl { top: -6px; left: -6px; }
+.blueprint > .corner.tr { top: -6px; right: -6px; }
+.blueprint > .corner.bl { bottom: -6px; left: -6px; }
+.blueprint > .corner.br { bottom: -6px; right: -6px; }
+
+.duotone{position:relative;overflow:hidden}
+.duotone::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:var(--color-accent);mix-blend-mode:color}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 1px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { background: var(--color-accent); color: var(--color-bg); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: none;
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 1px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* — blueprint frame: components are wireframe objects (see .blueprint
+     and .corner above) — square, transparent, hairline-bordered — */
+.card, .btn, .input, .tag, .seg, .dialog { border-radius: 0; }
+.card, .dialog { background: transparent; border: 1px solid var(--color-divider); }
+.btn { border: 1px solid var(--color-divider); }
+.btn-primary { border-color: var(--color-accent); }
+.btn-ghost { border-color: transparent; }
+
+
+</style>
+<style>
+html { scroll-behavior: smooth; }
+body { margin: 0; text-wrap: pretty; }
+a { color: var(--color-accent-700); text-underline-offset: 3px; }
+a:hover { color: var(--color-accent); }
+.view { display: none; }
+.view.is-active { display: block; }
+@media (max-width: 880px) {
+  .nav { flex-wrap: wrap; row-gap: 10px; }
+  [style*="grid-template-columns: repeat(3, 1fr)"],
+  [style*="grid-template-columns: repeat(2, 1fr)"],
+  [style*="grid-template-columns: minmax(0,7fr) minmax(0,5fr)"],
+  [style*="grid-template-columns: minmax(0,5fr) minmax(0,7fr)"] { grid-template-columns: 1fr !important; }
+  [style*="grid-template-columns: repeat(6, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 560px) {
+  .table, .table thead, .table tbody, .table tr, .table th, .table td { display: block; width: auto; }
+  .table thead { display: none; }
+  .table tr { border-bottom: 1px solid var(--color-divider); padding: 8px 0; }
+  .table td { padding: 4px 12px !important; }
+}
+</style>
+</head>
+<body>
+
+
+<nav class="nav" style="padding-inline: max(clamp(20px,5vw,72px), calc((100% - 1180px) / 2 + clamp(20px,5vw,72px))); padding-block: 20px; gap: 24px; border-bottom: 1px solid var(--color-divider)">
+  <span class="nav-brand" style="display: flex; align-items: center; gap: 11px; margin-right: auto">
+    <svg viewBox="0 0 64 64" width="26" height="26" style="display: block; color: var(--color-text)" aria-hidden="true">
+      <rect x="1" y="1" width="62" height="62" fill="none" stroke="currentColor" stroke-width="1.5" />
+      <rect x="10" y="34" width="7" height="18" fill="currentColor" />
+      <rect x="21" y="20" width="7" height="32" fill="currentColor" />
+      <rect x="32" y="28" width="7" height="24" fill="currentColor" />
+      <rect x="49" y="40" width="7" height="12" fill="var(--color-accent)" />
+      <rect x="44" y="9" width="2" height="46" fill="var(--color-accent)" />
+    </svg>
+    <span style="letter-spacing: 0.06em; text-transform: uppercase; font-size: 19px">Edgeine</span>
+  </span>
+  <a href="#overview" data-view="overview">Overview</a>
+  <a href="#methodology" data-view="methodology">Methodology</a>
+  <a href="#dashboard" data-view="dashboard">Research dashboard</a>
+  <a href="https://nathanielyork.dev" style="color: var(--color-accent-700)">Portfolio ↗</a>
+</nav>
+
+<div style="max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px,5vw,72px)">
+
+<div class="view is-active" id="view-overview">
+  <section style="padding: 96px 0 72px">
+    <h1 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(42px,6vw,86px); line-height: 1.04; letter-spacing: 0.01em; text-transform: uppercase; margin: 0 0 0 -0.052em">
+      <span style="display: block">Searching for a real</span>
+      <span style="display: block">edge in market data.</span>
+    </h1>
+    <p style="font-size: 22px; line-height: 32px; max-width: 56ch; margin: 40px 0 0">
+      A research engine that tests whether a trading idea actually holds up statistically — or correctly proves it doesn't.
+    </p>
+    <p style="font-size: 17px; line-height: 27px; max-width: 62ch; margin: 28px 0 0">
+      Edgeine is a statistics and machine-learning pipeline that searches historical futures market data for a genuinely profitable, persistent trading edge. Finding one is the objective — if one is there to be found at all.
+    </p>
+    <p style="font-size: 17px; line-height: 27px; max-width: 62ch; margin: 24px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">
+      Most of the code is statistical gates and falsification tests, because in this domain almost everything that looks like an edge isn't one. A discovery is only worth acting on if it survives a system built to break it — so "no" has to be an answer the pipeline can reach, or a "yes" means nothing.
+    </p>
+    <p style="font-size: 17px; line-height: 27px; max-width: 62ch; margin: 24px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">
+      It is not a trading bot: no order execution, no live data, and no path to either. This is the research that would have to come first.
+    </p>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px">
+      <a class="btn btn-primary" href="#methodology" data-view="methodology" style="text-decoration: none">Read the methodology</a>
+      <a class="btn btn-secondary" href="#dashboard" data-view="dashboard" style="text-decoration: none">See the dashboard</a>
+    </div>
+  </section>
+
+  <section style="padding: 24px 0 72px">
+    <div class="blueprint">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <header style="display: flex; flex-wrap: wrap; align-items: stretch; border-bottom: 1px solid var(--color-divider)">
+        <span style="flex: 1; min-width: 16ch; padding: 12px 24px; font-size: 13px; line-height: 24px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600">Edgeine — build record</span>
+        <span style="padding: 12px 24px; font-size: 13px; line-height: 24px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; border-left: 1px solid var(--color-divider); white-space: nowrap; color: color-mix(in srgb, var(--color-text) 70%, transparent)">Python</span>
+        <span style="padding: 12px 24px; font-size: 13px; line-height: 24px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; border-left: 1px solid var(--color-divider); white-space: nowrap; color: color-mix(in srgb, var(--color-text) 70%, transparent)">Sheet 01 of 03</span>
+      </header>
+      <table class="table" style="table-layout: fixed">
+        <colgroup><col style="width: 72px" /><col style="width: 34%" /><col style="width: 20%" /><col /></colgroup>
+        <thead>
+          <tr>
+            <th scope="col" style="font-size: 13px; font-weight: 600; color: color-mix(in srgb, var(--color-text) 70%, transparent); padding: 12px 24px 12px 24px">No.</th>
+            <th scope="col" style="font-size: 13px; font-weight: 600; color: color-mix(in srgb, var(--color-text) 70%, transparent); padding: 12px 24px 12px 0">Property</th>
+            <th scope="col" style="font-size: 13px; font-weight: 600; color: color-mix(in srgb, var(--color-text) 70%, transparent); padding: 12px 24px 12px 0">Value</th>
+            <th scope="col" style="font-size: 13px; font-weight: 600; color: color-mix(in srgb, var(--color-text) 70%, transparent); padding: 12px 24px 12px 0">Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--color-accent-700); padding: 12px 24px; font-feature-settings: 'tnum' 1">01</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0">Python modules</td>
+            <td style="font-family: var(--font-heading); font-weight: 600; font-size: 22px; line-height: 24px; letter-spacing: 0.02em; padding: 12px 24px 12px 0; white-space: nowrap">51</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">About 6,300 lines across nine packages</td>
+          </tr>
+          <tr>
+            <td style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--color-accent-700); padding: 12px 24px; font-feature-settings: 'tnum' 1">02</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0">Database tables</td>
+            <td style="font-family: var(--font-heading); font-weight: 600; font-size: 22px; line-height: 24px; letter-spacing: 0.02em; padding: 12px 24px 12px 0; white-space: nowrap">22</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">SQLAlchemy models, three Alembic migrations</td>
+          </tr>
+          <tr>
+            <td style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--color-accent-700); padding: 12px 24px; font-feature-settings: 'tnum' 1">03</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0">CLI entrypoints</td>
+            <td style="font-family: var(--font-heading); font-weight: 600; font-size: 22px; line-height: 24px; letter-spacing: 0.02em; padding: 12px 24px 12px 0; white-space: nowrap">7</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Ingestion, dataset building, screening, robustness, certification</td>
+          </tr>
+          <tr>
+            <td style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--color-accent-700); padding: 12px 24px; font-feature-settings: 'tnum' 1">04</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0">Automated tests</td>
+            <td style="font-family: var(--font-heading); font-weight: 600; font-size: 22px; line-height: 24px; letter-spacing: 0.02em; padding: 12px 24px 12px 0; white-space: nowrap">305</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Across 43 files, unit and integration</td>
+          </tr>
+          <tr>
+            <td style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--color-accent-700); padding: 12px 24px; font-feature-settings: 'tnum' 1">05</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0">Dashboard pages</td>
+            <td style="font-family: var(--font-heading); font-weight: 600; font-size: 22px; line-height: 24px; letter-spacing: 0.02em; padding: 12px 24px 12px 0; white-space: nowrap">6</td>
+            <td style="font-size: 15px; line-height: 24px; padding: 12px 24px 12px 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Read-only Streamlit over the research database</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin: 0; padding: 12px 24px; border-top: 1px solid var(--color-divider); font-size: 13px; line-height: 24px; color: color-mix(in srgb, var(--color-text) 70%, transparent)">Counts taken from the repository, unrounded. Packages: ingestion, cleaning, features, setups, labels, hypotheses, robustness, stats, backtest, dashboard.</p>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 20px; margin: 32px 0 0; padding: 16px 0 0; border-top: 1px solid var(--color-divider)">
+      <span style="font-size: 13px; line-height: 20px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700)">Stack</span>
+      <span style="display: flex; flex-wrap: wrap; gap: 8px">
+        <span class="tag tag-neutral">Python</span>
+        <span class="tag tag-neutral">SQLAlchemy</span>
+        <span class="tag tag-neutral">Alembic</span>
+        <span class="tag tag-neutral">pandas</span>
+        <span class="tag tag-neutral">scipy</span>
+        <span class="tag tag-neutral">statsmodels</span>
+        <span class="tag tag-neutral">scikit-learn</span>
+        <span class="tag tag-neutral">LightGBM</span>
+        <span class="tag tag-neutral">SHAP</span>
+        <span class="tag tag-neutral">pandas-market-calendars</span>
+        <span class="tag tag-neutral">pytest</span>
+        <span class="tag tag-neutral">Streamlit</span>
+        <span class="tag tag-neutral">Plotly</span>
+      </span>
+    </div>
+  </section>
+
+  <section style="padding: 48px 0 60px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">02 · Why it exists</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 32px; background: var(--color-divider)" />
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px,3vw,48px)">
+      <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <h2 style="font-size: 22px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Symmetric by design</h2>
+        <p style="font-size: 15px; line-height: 24px; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">The system must be equally capable of proving an apparent edge is overfit noise as confirming a real one. Every statistical gate exists to reject false positives, not to produce impressive-looking numbers.</p>
+      </div>
+      <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <h2 style="font-size: 22px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Data decides the ceiling</h2>
+        <p style="font-size: 15px; line-height: 24px; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">A result is only as trustworthy as the tier it came from. A correlation found on free, two-year-lookback data is useful for generating hypotheses and is structurally never allowed to become a certified edge.</p>
+      </div>
+      <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <h2 style="font-size: 22px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Every claim traceable</h2>
+        <p style="font-size: 15px; line-height: 24px; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Nothing is a number in a printout with no record of how it was produced. Raw data is never mutated — corrections arrive as new, provenance-tracked ingestion runs, not silent overwrites.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 48px 0 60px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">03 · Architecture</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 32px; background: var(--color-divider)" />
+    <div style="display: grid; grid-template-columns: minmax(0,7fr) minmax(0,5fr); gap: 24px clamp(24px,5vw,88px); align-items: start">
+      <div style="position: relative; padding-left: 28px">
+        <div style="position: absolute; left: 0; top: 14px; bottom: 14px; width: 1px; background: var(--color-divider)"></div>
+        <div style="position: relative; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+          <span style="position: absolute; left: -31px; top: 20px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+          <h3 style="font-size: 19px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">raw_bars → clean_bars</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 4px 0 0; color: color-mix(in srgb, var(--color-text) 74%, transparent)">Vendor ingestion, tagged with a data tier and a provenance record. Raw bars are immutable.</p>
+        </div>
+        <div style="position: relative; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+          <span style="position: absolute; left: -31px; top: 20px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+          <h3 style="font-size: 19px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">features</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 4px 0 0; color: color-mix(in srgb, var(--color-text) 74%, transparent)">As-of joined, registry-declared features — computed only from information available at the setup's timestamp.</p>
+        </div>
+        <div style="position: relative; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+          <span style="position: absolute; left: -31px; top: 20px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+          <h3 style="font-size: 19px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">setups → setup_outcomes</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 4px 0 0; color: color-mix(in srgb, var(--color-text) 74%, transparent)">Triple-barrier labelling. Every outcome is R-multiple normalized, so instruments and contract-quarters pool directly.</p>
+        </div>
+        <div style="position: relative; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+          <span style="position: absolute; left: -31px; top: 20px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+          <h3 style="font-size: 19px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">hypotheses</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 4px 0 0; color: color-mix(in srgb, var(--color-text) 74%, transparent)">Pre-registered, then Stage 1 screened against the development sample only.</p>
+        </div>
+        <div style="position: relative; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+          <span style="position: absolute; left: -31px; top: 20px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+          <h3 style="font-size: 19px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">experiments</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 4px 0 0; color: color-mix(in srgb, var(--color-text) 74%, transparent)">Backtest, walk-forward and statistical test, each persisted with its config snapshot.</p>
+        </div>
+        <div style="position: relative; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+          <span style="position: absolute; left: -31px; top: 20px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+          <h3 style="font-size: 19px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">robustness_results</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 4px 0 0; color: color-mix(in srgb, var(--color-text) 74%, transparent)">Phase 4's four lenses, run on the development sample and AND-gated.</p>
+        </div>
+        <div style="position: relative; padding: 12px 0">
+          <span style="position: absolute; left: -31px; top: 20px; width: 7px; height: 7px; background: var(--color-accent-900)"></span>
+          <h3 style="font-size: 19px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">edges</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 4px 0 0; color: color-mix(in srgb, var(--color-text) 74%, transparent)">Reachable only through one explicit, human-gated command that reads the sacred holdout.</p>
+        </div>
+      </div>
+      <div>
+        <h2 style="font-size: 30px; line-height: 34px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">One direction, no shortcuts</h2>
+        <p style="font-size: 15px; line-height: 24px; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Each stage writes to the next and to the database, never back over its input. Because everything downstream of labelling is expressed as a multiple of the trade's own risk, results across different instruments, contract sizes and periods are directly comparable and poolable — without a spliced continuous-contract price series, which is deliberately left to a paid vendor rather than DIY'd.</p>
+        <p style="font-size: 15px; line-height: 24px; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Seven command-line entrypoints drive it; a read-only Streamlit dashboard reads what they wrote.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 48px 0 60px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">04 · Data tiers</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 24px; background: var(--color-divider)" />
+    <p style="font-size: 15px; line-height: 24px; max-width: 68ch; margin: 0 0 32px; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Not a convention enforced by discipline. The certification script calls <code style="font-family: ui-monospace, monospace; font-size: 13px">require_validation_tier()</code> and hard-stops before it will even read the sacred holdout if any instrument behind a candidate isn't validation-tier. No amount of exploratory data, however much accumulates, can cross that gate.</p>
+    <div class="blueprint">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" style="padding: 12px 16px">Tier</th>
+            <th scope="col" style="padding: 12px 16px">Source</th>
+            <th scope="col" style="padding: 12px 16px">Candidate?</th>
+            <th scope="col" style="padding: 12px 16px">Certified edge?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 14px 16px"><span style="display: inline-flex; align-items: center; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 3px 10px; background: #888888; color: #ffffff">SYNTHETIC</span></td>
+            <td style="padding: 14px 16px">Generated random-walk data, used to prove the pipeline itself is correct</td>
+            <td style="padding: 14px 16px">Yes, as a test fixture</td>
+            <td style="padding: 14px 16px">No</td>
+          </tr>
+          <tr>
+            <td style="padding: 14px 16px"><span style="display: inline-flex; align-items: center; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 3px 10px; background: #d9822b; color: #ffffff">EXPLORATORY</span></td>
+            <td style="padding: 14px 16px">Free-tier vendor — real CME prices, rolling two-year lookback</td>
+            <td style="padding: 14px 16px">Yes</td>
+            <td style="padding: 14px 16px"><strong>No, structurally</strong></td>
+          </tr>
+          <tr>
+            <td style="padding: 14px 16px"><span style="display: inline-flex; align-items: center; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 3px 10px; background: #2e7d32; color: #ffffff">VALIDATION</span></td>
+            <td style="padding: 14px 16px">A paid vendor with deep, clean history</td>
+            <td style="padding: 14px 16px">Yes</td>
+            <td style="padding: 14px 16px">Yes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="padding: 48px 0 72px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">05 · Where it stands</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 32px; background: var(--color-divider)" />
+    <div style="display: grid; grid-template-columns: minmax(0,5fr) minmax(0,7fr); gap: 24px clamp(24px,5vw,88px)">
+      <h2 style="font-size: 30px; line-height: 34px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Proven end to end on planted signals</h2>
+      <div>
+        <p style="font-size: 15px; line-height: 24px; margin: 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Every piece of the pipeline through certification has been proven correct against synthetic fixtures with known, planted signals — including a fixture designed specifically to clear every Stage 2 gate while still being regime-concentrated, which Phase 4 correctly catches and rejects.</p>
+        <p style="font-size: 15px; line-height: 24px; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">No certified edges exist today, which is the expected state rather than a gap: no validation-tier data has been purchased yet, so certification correctly hard-stops on every real instrument.</p>
+        <p style="font-size: 15px; line-height: 24px; margin: 20px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Unit tests favour hand-verified arithmetic and named trap cases over smoke tests — for example, a test proving a block bootstrap's confidence interval is genuinely wider on autocorrelated data than on i.i.d. data, not merely that the code runs.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="view" id="view-methodology">
+  <section style="padding: 72px 0 48px">
+    <h1 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(38px,5vw,68px); line-height: 1.04; letter-spacing: 0.01em; text-transform: uppercase; margin: 0 0 0 -0.052em">
+      <span style="display: block">Four gates, then four</span>
+      <span style="display: block">attempts to break it.</span>
+    </h1>
+    <p style="font-size: 17px; line-height: 27px; max-width: 62ch; margin: 36px 0 0; color: color-mix(in srgb, var(--color-text) 82%, transparent)">Screening is cheap and lenient and makes no claim. Confirmation is where a claim is made. Robustness testing then exists only to try to destroy that claim, and certification touches the holdout once.</p>
+  </section>
+
+  <section style="padding: 24px 0 56px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Stage 1 · Screening</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 28px; background: var(--color-divider)" />
+    <div style="display: grid; grid-template-columns: minmax(0,5fr) minmax(0,7fr); gap: 24px clamp(24px,5vw,88px)">
+      <h2 style="font-size: 26px; line-height: 30px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">A filter, not a claim</h2>
+      <div>
+        <p style="font-size: 15px; line-height: 24px; margin: 0; color: color-mix(in srgb, var(--color-text) 80%, transparent)">Every hypothesis in the pre-registered space is screened against the development sample only — the sacred holdout is carved out and excluded before this ever runs. One hypothesis per continuous feature, tested via point-biserial correlation; one per categorical feature value, tested as a 0/1 indicator.</p>
+        <p style="font-size: 15px; line-height: 24px; margin: 18px 0 0; color: color-mix(in srgb, var(--color-text) 62%, transparent)">Deliberately loose at alpha = 0.20. Its only job is to avoid running the expensive Stage 2 test on hypotheses that are obviously nowhere close.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 24px 0 56px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Stage 2 · Confirmatory testing</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 28px; background: var(--color-divider)" />
+    <p style="font-size: 15px; line-height: 24px; max-width: 68ch; margin: 0 0 32px; color: color-mix(in srgb, var(--color-text) 80%, transparent)">Stage 1 survivors run through purged, embargoed walk-forward cross-validation. A hypothesis reaches <code style="font-family: ui-monospace, monospace; font-size: 13px">candidate</code> only if it clears all four gates below — documented everywhere in the codebase as a human review checkpoint, not a certified edge.</p>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(20px,3vw,48px)">
+      <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <span style="display: block; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 8px">Gate 01</span>
+        <h3 style="font-size: 22px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">N ≥ 100 out-of-sample trades</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 16px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Below this the hypothesis terminates at <code style="font-family: ui-monospace, monospace; font-size: 13px">insufficient_data</code> — a correct outcome, not a failure.</p>
+      </div>
+      <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <span style="display: block; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 8px">Gate 02</span>
+        <h3 style="font-size: 22px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">BH-FDR corrected p &lt; 0.05</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 16px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Benjamini-Hochberg correction across the whole Stage 2 family tested together in one run — not the full Stage 1 space, and not across separate runs.</p>
+      </div>
+      <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <span style="display: block; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 8px">Gate 03</span>
+        <h3 style="font-size: 22px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Effect size ≥ 0.15R</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 16px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Statistically significant but economically trivial effects don't qualify on significance alone.</p>
+      </div>
+      <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <span style="display: block; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 8px">Gate 04</span>
+        <h3 style="font-size: 22px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Stability and deflated Sharpe</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 16px 0 0; color: color-mix(in srgb, var(--color-text) 78%, transparent)">At least 65% of walk-forward folds agreeing in sign with the aggregate effect, plus a deflated Sharpe ratio ≥ 0.95 — Bailey and López de Prado, correcting for how many hypotheses were tried.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 24px 0 56px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Phase 4 · Falsification</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 28px; background: var(--color-divider)" />
+    <p style="font-size: 15px; line-height: 24px; max-width: 68ch; margin: 0 0 32px; color: color-mix(in srgb, var(--color-text) 80%, transparent)">A candidate is not trusted yet. Phase 4's job is to aggressively try to break it, through four lenses that are all AND-gated: passing one never compensates for failing another.</p>
+    <div style="position: relative; padding-left: 28px">
+      <div style="position: absolute; left: 0; top: 16px; bottom: 16px; width: 1px; background: var(--color-divider)"></div>
+      <div style="position: relative; padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+        <span style="position: absolute; left: -31px; top: 24px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+        <h3 style="font-size: 20px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">Monte Carlo block bootstrap</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 6px 0 0; max-width: 76ch; color: color-mix(in srgb, var(--color-text) 78%, transparent)">The only p-value surface in this phase, eligible for batch BH-FDR correction across multiple candidates certified together. Circular block resampling rather than i.i.d., so path-dependent statistics like maximum drawdown reflect real trade-sequence autocorrelation.</p>
+      </div>
+      <div style="position: relative; padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+        <span style="position: absolute; left: -31px; top: 24px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+        <h3 style="font-size: 20px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">Volatility-regime stability</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 6px 0 0; max-width: 76ch; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Does the effect exist across at least two well-populated volatility regimes, or only in one narrow slice of history? Fails closed — not a silent skip — if there isn't enough regime diversity to even assess it.</p>
+      </div>
+      <div style="position: relative; padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent)">
+        <span style="position: absolute; left: -31px; top: 24px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+        <h3 style="font-size: 20px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">Parameter sensitivity</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 6px 0 0; max-width: 76ch; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Does the effect survive nearby label-rule variations, at 0.75× to 1.5× the candidate's own target, or is it an artifact of one exact parameter choice?</p>
+      </div>
+      <div style="position: relative; padding: 16px 0">
+        <span style="position: absolute; left: -31px; top: 24px; width: 7px; height: 7px; background: var(--color-accent)"></span>
+        <h3 style="font-size: 20px; line-height: 24px; letter-spacing: 0.03em; text-transform: uppercase; margin: 0">Cost sensitivity</h3>
+        <p style="font-size: 15px; line-height: 24px; margin: 6px 0 0; max-width: 76ch; color: color-mix(in srgb, var(--color-text) 78%, transparent)">Does the effect survive twice the assumed commission and slippage, or does it evaporate the moment trading gets slightly more expensive?</p>
+      </div>
+    </div>
+    <p style="font-size: 15px; line-height: 24px; max-width: 76ch; margin: 28px 0 0; color: color-mix(in srgb, var(--color-text) 62%, transparent)">Regime and sensitivity checks are deliberately sign-agreement and magnitude checks against point estimates, never fresh significance tests — keeping exactly one p-value surface anywhere in this phase, so robustness testing can never become a second, uncorrected source of multiple testing.</p>
+  </section>
+
+  <section style="padding: 24px 0 56px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Certification · The sacred holdout</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 28px; background: var(--color-divider)" />
+    <div style="display: grid; grid-template-columns: minmax(0,5fr) minmax(0,7fr); gap: 24px clamp(24px,5vw,88px)">
+      <h2 style="font-size: 26px; line-height: 30px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Touched at most once</h2>
+      <div>
+        <p style="font-size: 15px; line-height: 24px; margin: 0; color: color-mix(in srgb, var(--color-text) 80%, transparent)">A slice of each dataset — 15% by default — is carved out before Stage 1 ever runs and is never touched by anything except one explicit, human-gated final step.</p>
+        <p style="font-size: 15px; line-height: 24px; margin: 18px 0 0; color: color-mix(in srgb, var(--color-text) 80%, transparent)">Two independent guards enforce that in code rather than convention: the function that reads the holdout requires the hypothesis to be at <code style="font-family: ui-monospace, monospace; font-size: 13px">robustness_passed</code>, and certification refuses to run a second time on a hypothesis that has already reached a terminal status.</p>
+      </div>
+    </div>
+  </section>
+
+    <section style="padding: 24px 0 72px">
+      <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Known limitations</span>
+      <hr style="height: 1px; border: 0; margin: 0 0 28px; background: var(--color-divider)" />
+      <p style="font-size: 15px; line-height: 24px; max-width: 68ch; margin: 0 0 28px; color: color-mix(in srgb, var(--color-text) 80%, transparent)">Accepted and documented rather than quietly swept under the rug.</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px,3vw,48px)">
+        <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <h3 style="font-size: 20px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Cross-run multiple testing</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 14px 0 0; color: color-mix(in srgb, var(--color-text) 76%, transparent)">BH-FDR is scoped to one script invocation's Stage 2 family, not the research program's entire history. Tracked for human-reviewer awareness.</p>
+        </div>
+        <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <h3 style="font-size: 20px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Commission estimates</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 14px 0 0; color: color-mix(in srgb, var(--color-text) 76%, transparent)">Most instruments' costs come from real broker rate schedules cross-referenced against two independent brokers — a reasonable estimate, not a verified quote.</p>
+        </div>
+        <div style="position: relative; border: 1px solid var(--color-divider); padding: 24px">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <h3 style="font-size: 20px; line-height: 24px; letter-spacing: 0.02em; text-transform: uppercase; margin: 0">Regime testing has limited teeth</h3>
+          <p style="font-size: 14px; line-height: 22px; margin: 14px 0 0; color: color-mix(in srgb, var(--color-text) 76%, transparent)">Not for want of implementation: there isn't yet enough real history to populate multiple distinct volatility regimes.</p>
+        </div>
+      </div>
+    </section>
+</div>
+
+<div class="view" id="view-dashboard">
+  <section style="padding: 72px 0 40px">
+    <h1 style="font-family: var(--font-heading); font-weight: 600; font-size: clamp(38px,5vw,68px); line-height: 1.04; letter-spacing: 0.01em; text-transform: uppercase; margin: 0 0 0 -0.052em">
+      <span style="display: block">A research interface,</span>
+      <span style="display: block">not a trading interface.</span>
+    </h1>
+    <p style="font-size: 17px; line-height: 27px; max-width: 62ch; margin: 36px 0 0; color: color-mix(in srgb, var(--color-text) 82%, transparent)">Six read-only Streamlit pages over the research database. Every number is read directly from a persisted row — nothing is recomputed for display. Below: the pages as they stand today, honest zeros included.</p>
+  </section>
+
+  <section style="padding: 24px 0 56px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Page 01 · Overview</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 32px; background: var(--color-divider)" />
+    <div class="blueprint" style="padding: 28px">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 style="font-size: 28px; line-height: 32px; margin: 0">ML Trading Edge Discovery</h3>
+      <p style="font-size: 13px; line-height: 20px; max-width: 90ch; margin: 8px 0 0; color: color-mix(in srgb, var(--color-text) 62%, transparent)">A research interface, not a trading interface. Every number below is read directly from the research database — nothing here is recomputed. "No edge found" is a valid, successful research outcome, not a failure.</p>
+      <div style="margin: 24px 0 0; padding: 14px 16px; border: 1px solid #b00020; border-left-width: 4px; background: color-mix(in srgb, #b00020 6%, transparent); font-size: 13px; line-height: 20px">
+        <strong>No validation-tier data has been ingested.</strong> Certification is structurally unreachable right now — no hypothesis can become a <code style="font-family: ui-monospace, monospace">certified_edge</code>, no matter how promising it looks on exploratory data.
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; margin: 24px 0 0; background: var(--color-divider); border: 1px solid var(--color-divider)">
+        <div style="background: var(--color-bg); padding: 14px 16px">
+          <span style="display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Instruments</span>
+          <span style="display: block; font-family: var(--font-heading); font-weight: 600; font-size: 30px; line-height: 34px; font-feature-settings: 'tnum' 1">—</span>
+        </div>
+        <div style="background: var(--color-bg); padding: 14px 16px">
+          <span style="display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Root symbols</span>
+          <span style="display: block; font-family: var(--font-heading); font-weight: 600; font-size: 30px; line-height: 34px; font-feature-settings: 'tnum' 1">—</span>
+        </div>
+        <div style="background: var(--color-bg); padding: 14px 16px">
+          <span style="display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Experiments run</span>
+          <span style="display: block; font-family: var(--font-heading); font-weight: 600; font-size: 30px; line-height: 34px; font-feature-settings: 'tnum' 1">—</span>
+        </div>
+        <div style="background: var(--color-bg); padding: 14px 16px">
+          <span style="display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Hypotheses tested</span>
+          <span style="display: block; font-family: var(--font-heading); font-weight: 600; font-size: 30px; line-height: 34px; font-feature-settings: 'tnum' 1">—</span>
+        </div>
+        <div style="background: var(--color-bg); padding: 14px 16px">
+          <span style="display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Candidates or beyond</span>
+          <span style="display: block; font-family: var(--font-heading); font-weight: 600; font-size: 30px; line-height: 34px; font-feature-settings: 'tnum' 1">0</span>
+        </div>
+        <div style="background: var(--color-bg); padding: 14px 16px">
+          <span style="display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Certified edges</span>
+          <span style="display: block; font-family: var(--font-heading); font-weight: 600; font-size: 30px; line-height: 34px; font-feature-settings: 'tnum' 1">0</span>
+        </div>
+      </div>
+      <h4 style="font-size: 18px; margin: 28px 0 10px">Ingestion runs by data tier</h4>
+      <div style="display: grid; grid-template-columns: 96px 1fr; gap: 8px 12px; align-items: center; max-width: 640px">
+        <span style="font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 70%, transparent)">synthetic</span>
+        <span style="display: block; height: 16px; width: 78%; background: #888888"></span>
+        <span style="font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 70%, transparent)">exploratory</span>
+        <span style="display: block; height: 16px; width: 46%; background: #d9822b"></span>
+        <span style="font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 70%, transparent)">validation</span>
+        <span style="display: block; height: 16px; width: 1px; background: #2e7d32"></span>
+      </div>
+    </div>
+    <p style="font-size: 13px; line-height: 20px; margin: 14px 0 0; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Figures shown as — are read live from the research database; the zeros are the pipeline's real, current state.</p>
+  </section>
+
+  <section style="padding: 24px 0 56px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Page 02 · Hypothesis discovery</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 32px; background: var(--color-divider)" />
+    <div class="blueprint" style="padding: 28px">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 style="font-size: 28px; line-height: 32px; margin: 0">Hypothesis Discovery</h3>
+      <p style="font-size: 13px; line-height: 20px; max-width: 90ch; margin: 8px 0 0; color: color-mix(in srgb, var(--color-text) 62%, transparent)">Stage 1 is a cheap, lenient univariate screen — a filter, not a claim. Stage 2 is where "candidate" claims are actually made, gated by BH-FDR correction, an effect-size floor, fold-stability, and the deflated Sharpe ratio.</p>
+      <h4 style="font-size: 18px; margin: 28px 0 4px">Status funnel</h4>
+      <p style="font-size: 13px; line-height: 20px; margin: 0 0 16px; color: color-mix(in srgb, var(--color-text) 62%, transparent)">Every one of the 9 real status values this pipeline can produce, including ones with zero hypotheses today — not just whatever's present.</p>
+      <div style="display: grid; grid-template-columns: 150px 1fr; gap: 6px 12px; align-items: center; max-width: 720px">
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">registered</span>
+        <span style="display: block; height: 14px; width: 100%; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">insufficient_data</span>
+        <span style="display: block; height: 14px; width: 34%; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">tested</span>
+        <span style="display: block; height: 14px; width: 1px; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">not_significant</span>
+        <span style="display: block; height: 14px; width: 21%; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">candidate</span>
+        <span style="display: block; height: 14px; width: 1px; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">robustness_passed</span>
+        <span style="display: block; height: 14px; width: 1px; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">robustness_failed</span>
+        <span style="display: block; height: 14px; width: 1px; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">holdout_failed</span>
+        <span style="display: block; height: 14px; width: 1px; background: var(--color-accent-400)"></span>
+        <span style="font-family: ui-monospace, monospace; font-size: 12px; color: color-mix(in srgb, var(--color-text) 74%, transparent)">certified_edge</span>
+        <span style="display: block; height: 14px; width: 1px; background: var(--color-accent-400)"></span>
+      </div>
+      <h4 style="font-size: 18px; margin: 28px 0 10px">Stage 2: confirmatory walk-forward + BH-FDR</h4>
+      <div style="padding: 14px 16px; border: 1px solid var(--color-accent); border-left-width: 4px; background: color-mix(in srgb, var(--color-accent) 8%, transparent); font-size: 13px; line-height: 20px">No hypothesis has reached Stage 2 confirmatory testing with a persisted result yet.</div>
+      <h4 style="font-size: 18px; margin: 24px 0 4px">Insufficient data</h4>
+      <p style="font-size: 13px; line-height: 20px; margin: 0 0 12px; color: color-mix(in srgb, var(--color-text) 62%, transparent)">Below the minimum out-of-sample trade count — zero statistical-test rows exist for these by design. <code style="font-family: ui-monospace, monospace">insufficient_data</code> is a correct, successful research outcome, not a failure.</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" style="padding: 10px 12px">hypothesis_text</th>
+            <th scope="col" style="padding: 10px 12px">n_oos_trades</th>
+            <th scope="col" style="padding: 10px 12px">tier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 12px; font-family: ui-monospace, monospace; font-size: 12px">orb_range_pct is associated with outcome_r</td>
+            <td style="padding: 12px; font-feature-settings: 'tnum' 1">not recorded</td>
+            <td style="padding: 12px"><span style="display: inline-flex; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 3px 10px; background: #d9822b; color: #ffffff">EXPLORATORY</span></td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; font-family: ui-monospace, monospace; font-size: 12px">gap_direction = up is associated with outcome_r</td>
+            <td style="padding: 12px; font-feature-settings: 'tnum' 1">not recorded</td>
+            <td style="padding: 12px"><span style="display: inline-flex; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 3px 10px; background: #d9822b; color: #ffffff">EXPLORATORY</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size: 12px; line-height: 20px; margin: 16px 0 0; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Data tier legend:
+        <span style="display: inline-flex; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 2px 8px; background: #888888; color: #ffffff">SYNTHETIC</span>
+        <span style="display: inline-flex; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 2px 8px; background: #d9822b; color: #ffffff">EXPLORATORY</span>
+        <span style="display: inline-flex; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 2px 8px; background: #2e7d32; color: #ffffff">VALIDATION</span>
+        <span style="display: inline-flex; font-size: 11px; letter-spacing: 0.06em; font-weight: 700; padding: 2px 8px; background: #b00020; color: #ffffff">UNKNOWN</span>
+      </p>
+    </div>
+    <p style="font-size: 13px; line-height: 20px; margin: 14px 0 0; color: color-mix(in srgb, var(--color-text) 60%, transparent)">Hypothesis rows are illustrative of the pre-registered space's shape; the empty states are the page's real behaviour today.</p>
+  </section>
+
+  <section style="padding: 24px 0 72px">
+    <span style="display: block; font-size: 13px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--color-accent-700); margin: 0 0 12px; font-feature-settings: 'tnum' 1">Page 04 · Certification</span>
+    <hr style="height: 1px; border: 0; margin: 0 0 32px; background: var(--color-divider)" />
+    <div class="blueprint" style="padding: 28px">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <h3 style="font-size: 28px; line-height: 32px; margin: 0">Certification</h3>
+      <p style="font-size: 13px; line-height: 20px; max-width: 90ch; margin: 8px 0 0; color: color-mix(in srgb, var(--color-text) 62%, transparent)"><code style="font-family: ui-monospace, monospace">certified_edge</code> is the only status this dashboard is ever allowed to badge as certified — everything else here, no matter how promising, stays visibly exploratory.</p>
+      <div style="margin: 24px 0 0; padding: 14px 16px; border: 1px solid #b00020; border-left-width: 4px; background: color-mix(in srgb, #b00020 6%, transparent); font-size: 13px; line-height: 20px">
+        <strong>0 instruments have validation-tier data.</strong> Certification is structurally blocked: no hypothesis can reach <code style="font-family: ui-monospace, monospace">certified_edge</code> until real, purchased data is ingested for at least the instruments backing a <code style="font-family: ui-monospace, monospace">robustness_passed</code> candidate (0 exist today).
+      </div>
+      <h4 style="font-size: 18px; margin: 28px 0 10px">Certified edges</h4>
+      <div style="padding: 14px 16px; border: 1px solid var(--color-accent); border-left-width: 4px; background: color-mix(in srgb, var(--color-accent) 8%, transparent); font-size: 13px; line-height: 20px">0 certified edges.</div>
+      <h4 style="font-size: 18px; margin: 24px 0 4px">Sacred holdout confirmations</h4>
+      <p style="font-size: 13px; line-height: 20px; margin: 0 0 12px; color: color-mix(in srgb, var(--color-text) 62%, transparent)">The one-shot holdout check, touched exactly once per certified hypothesis.</p>
+      <div style="padding: 14px 16px; border: 1px solid var(--color-accent); border-left-width: 4px; background: color-mix(in srgb, var(--color-accent) 8%, transparent); font-size: 13px; line-height: 20px">No holdout confirmations recorded yet.</div>
+    </div>
+  </section>
+</div>
+
+  <footer style="border-top: 1px solid var(--color-divider); padding: 40px 0 56px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; justify-content: space-between">
+    <div>
+      <span style="display: flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 600; font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase">
+        <svg viewBox="0 0 64 64" width="22" height="22" style="display: block; color: var(--color-text)" aria-hidden="true">
+          <rect x="1" y="1" width="62" height="62" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <rect x="10" y="34" width="7" height="18" fill="currentColor" />
+          <rect x="21" y="20" width="7" height="32" fill="currentColor" />
+          <rect x="32" y="28" width="7" height="24" fill="currentColor" />
+          <rect x="49" y="40" width="7" height="12" fill="var(--color-accent)" />
+          <rect x="44" y="9" width="2" height="46" fill="var(--color-accent)" />
+        </svg>
+        Edgeine
+      </span>
+      <p style="font-size: 13px; line-height: 20px; margin: 12px 0 0; max-width: 56ch; color: color-mix(in srgb, var(--color-text) 62%, transparent)">Nothing in this project, including a certified edge should one ever exist, is investment advice or a recommendation to trade.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 22px">
+      <a href="https://nathanielyork.dev" style="text-decoration: none">Back to portfolio ↗</a>
+      <span style="color: color-mix(in srgb, var(--color-text) 55%, transparent)">Repository private — source available on request</span>
+    </div>
+  </footer>
+
+</div>
+
+
+<script>
+(function () {
+  var views = { overview: 'view-overview', methodology: 'view-methodology', dashboard: 'view-dashboard' };
+  function show(name, push) {
+    if (!views[name]) name = 'overview';
+    Object.keys(views).forEach(function (k) {
+      var el = document.getElementById(views[k]);
+      if (el) el.classList.toggle('is-active', k === name);
+    });
+    document.querySelectorAll('a[data-view]').forEach(function (a) {
+      if (a.closest('.nav')) {
+        if (a.getAttribute('data-view') === name) a.setAttribute('aria-current', 'page');
+        else a.removeAttribute('aria-current');
+      }
+    });
+    if (push) { try { history.replaceState(null, '', '#' + name); } catch (e) {} }
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[data-view]');
+    if (!a) return;
+    e.preventDefault();
+    show(a.getAttribute('data-view'), true);
+    window.scrollTo(0, 0);
+  });
+  show((location.hash || '').replace('#', ''), false);
+  window.addEventListener('hashchange', function () { show((location.hash || '').replace('#', ''), false); });
+})();
+</script>
+</body>
+</html>

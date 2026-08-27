@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NAB Amp — Know the profit before you buy it</title>
+<meta name="description" content="Scan a barcode in the aisle and NAB Amp pulls live Amazon fees, net profit, ROI and max buy price in about a second.">
+<meta name="theme-color" content="#0b1219">
+<meta property="og:title" content="NAB Amp — Know the profit before you buy it">
+<meta property="og:description" content="Live Amazon fee lookups, net profit and max buy price, straight from the SP-API.">
+<meta property="og:type" content="website">
+<link rel="icon" href="icon-32.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b1219;
+    --surface: #101c24;
+    --surface-2: #131e27;
+    --field: #0f1a22;
+    --border: #1f2d39;
+    --border-2: #223140;
+    --border-strong: #2c3d4b;
+    --text: #ffffff;
+    --muted: #8a9aa8;
+    --muted-2: #b9c5cd;
+    --dim: #6b7c89;
+    --accent: #22c55e;
+    --accent-light: #4ade80;
+    --ink: #06140b;
+    --font-ui: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent-light); text-decoration: none; }
+  a:hover { color: var(--accent); }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 18, 25, 0.92);
+    border-bottom: 1px solid #1b2833;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .site-header .wrap {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 11px; }
+
+  .mark {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border-radius: 9px;
+    background: var(--surface-2);
+    display: grid;
+    place-items: center;
+  }
+
+  .mark svg { width: 18px; height: 18px; display: block; }
+  .brand-name { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+
+  .nav { display: flex; align-items: center; gap: 28px; }
+  .nav a { font-size: 14px; font-weight: 500; color: var(--muted-2); }
+  .nav a:hover { color: var(--text); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-grid;
+    place-items: center;
+    border-radius: 12px;
+    padding: 15px 26px;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: default;
+    transition: background 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+  }
+
+  .btn-primary { background: var(--accent); color: var(--ink); }
+  .btn-primary:hover { background: var(--accent-light); color: var(--ink); }
+  .btn-ghost { border-color: var(--border-strong); color: var(--text); font-weight: 500; }
+  .btn-ghost:hover { background: rgba(255, 255, 255, 0.04); color: var(--text); }
+  .btn-sm { padding: 10px 18px; font-size: 14px; border-radius: 10px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 390px;
+    gap: 72px;
+    align-items: center;
+    padding-top: 96px;
+  }
+
+  .hero-copy { display: flex; flex-direction: column; gap: 28px; }
+
+  .eyebrow {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border-2);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--accent); }
+
+  h1 {
+    margin: 0;
+    font-size: 66px;
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: pretty;
+  }
+
+  .lede {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--muted-2);
+    max-width: 520px;
+    text-wrap: pretty;
+  }
+
+  .cta-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+  .soon-note {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: -18px 0 0;
+  }
+
+  .plan .soon-note { margin: 8px 0 0; text-align: center; }
+
+  .stats { display: flex; gap: 40px; flex-wrap: wrap; padding-top: 12px; }
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+  .stat-figure { font-family: var(--font-mono); font-size: 26px; font-weight: 500; }
+  .stat-label { font-size: 13px; color: #7b8b98; }
+
+  /* ---------- Phone ---------- */
+  .phone {
+    width: 390px;
+    height: 720px;
+    border-radius: 44px;
+    background: var(--field);
+    border: 1px solid var(--border-2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
+  }
+
+  .phone-bar {
+    height: 60px;
+    flex: none;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #1b2833;
+  }
+
+  .phone-bar-title { font-size: 16px; font-weight: 600; }
+  .phone-bar-meta { font-family: var(--font-mono); font-size: 12px; color: var(--dim); }
+  .phone-body { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  .viewport {
+    height: 200px;
+    flex: none;
+    border-radius: 18px;
+    background: var(--surface-2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .viewport::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(135deg, #172530 0 8px, #131e27 8px 16px);
+  }
+
+  .reticle { position: absolute; inset: 40px 52px; }
+  .reticle i { position: absolute; width: 24px; height: 24px; }
+  .reticle .tl { top: 0; left: 0; border-top: 4px solid #fff; border-left: 4px solid #fff; border-top-left-radius: 10px; }
+  .reticle .tr { top: 0; right: 0; border-top: 4px solid #fff; border-right: 4px solid #fff; border-top-right-radius: 10px; }
+  .reticle .bl { bottom: 0; left: 0; border-bottom: 4px solid #fff; border-left: 4px solid #fff; border-bottom-left-radius: 10px; }
+  .reticle .br { bottom: 0; right: 0; border-bottom: 4px solid #fff; border-right: 4px solid #fff; border-bottom-right-radius: 10px; }
+
+  .reticle .scanline {
+    top: 50%;
+    left: -8px;
+    right: -8px;
+    width: auto;
+    height: 3px;
+    margin-top: -1.5px;
+    border-radius: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.7);
+  }
+
+  .panel {
+    border-radius: 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .panel-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .figure-row { display: flex; align-items: baseline; gap: 10px; }
+
+  .figure {
+    font-family: var(--font-mono);
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--accent-light);
+  }
+
+  .figure-side { font-family: var(--font-mono); font-size: 15px; color: var(--accent-light); }
+  .rule { height: 1px; background: var(--border-2); margin: 12px 0 4px; }
+  .kv { display: flex; align-items: baseline; justify-content: space-between; }
+  .kv-label { font-size: 13px; color: var(--muted); }
+  .kv-value { font-family: var(--font-mono); font-size: 17px; }
+
+  .fees {
+    border-radius: 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 4px 16px;
+  }
+
+  .fee-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid #1c2935;
+  }
+
+  .fee-row:last-child { border-bottom: none; }
+  .fee-row .label { font-size: 14px; color: var(--muted-2); }
+  .fee-row .value { font-family: var(--font-mono); font-size: 14px; }
+
+  /* ---------- Sections ---------- */
+  section { padding-top: 128px; }
+  .section-head { display: flex; flex-direction: column; gap: 12px; max-width: 620px; margin-bottom: 48px; }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h2 { margin: 0; font-size: 40px; font-weight: 600; letter-spacing: -0.03em; text-wrap: pretty; }
+  h3 { margin: 0; font-size: 20px; font-weight: 600; }
+
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  .card {
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+  .step-num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+  .feature h3 { font-size: 18px; }
+
+  /* ---------- Pricing ---------- */
+  .plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 760px; }
+
+  .plan {
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .plan-pro { border-color: #2c5c3f; }
+  .plan-head { display: flex; flex-direction: column; gap: 6px; }
+  .plan-name-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .plan-name { font-size: 15px; font-weight: 600; color: var(--muted-2); }
+  .plan-pro .plan-name { color: var(--accent-light); }
+
+  .badge {
+    flex: none;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.14);
+    color: var(--accent-light);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .price-row { display: flex; align-items: baseline; gap: 6px; }
+  .price { font-family: var(--font-mono); font-size: 40px; font-weight: 600; letter-spacing: -0.03em; }
+  .per { font-size: 14px; color: #7b8b98; }
+
+  .plan ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: var(--muted); }
+  .plan .btn { margin-top: auto; width: 100%; padding: 13px 18px; font-size: 15px; border-radius: 11px; }
+
+  /* ---------- Closing ---------- */
+  .closer { margin-top: 128px; }
+
+  .closer-inner {
+    border-radius: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .closer h2 { font-size: 34px; }
+  .closer p { margin: 0; font-size: 17px; color: var(--muted); }
+
+  footer { margin-top: 96px; border-top: 1px solid #1b2833; }
+
+  footer .wrap {
+    padding-top: 36px;
+    padding-bottom: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .mark-sm { width: 24px; height: 24px; border-radius: 7px; }
+  .mark-sm svg { width: 14px; height: 14px; }
+  .footer-name { font-size: 14px; font-weight: 500; color: var(--muted-2); }
+  .disclaimer { font-size: 13px; color: #5f6f7c; max-width: 560px; text-wrap: pretty; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1040px) {
+    .hero { grid-template-columns: 1fr; gap: 56px; justify-items: start; }
+    .grid-3, .grid-2, .plans { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 0 20px; }
+    .nav { gap: 16px; }
+    .nav a:not(.btn) { display: none; }
+    h1 { font-size: 40px; }
+    h2 { font-size: 30px; }
+    .lede { font-size: 17px; }
+    section { padding-top: 88px; }
+    .section-head { margin-bottom: 32px; }
+    .grid-3, .grid-2, .plans { grid-template-columns: 1fr; }
+    .phone { width: 100%; max-width: 390px; height: auto; }
+    .closer { margin-top: 88px; }
+    .closer-inner { padding: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M2 6.2V3.8A1.8 1.8 0 0 1 3.8 2h2.4M13.8 2h2.4A1.8 1.8 0 0 1 18 3.8v2.4M18 13.8v2.4A1.8 1.8 0 0 1 16.2 18h-2.4M6.2 18H3.8A1.8 1.8 0 0 1 2 16.2v-2.4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M1 10h18" stroke="#22c55e" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="brand-name">NAB Amp</span>
+    </div>
+    <nav class="nav">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#pricing" class="btn btn-primary btn-sm">Coming soon</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="dot"></span>Live fees from Amazon's own API</span>
+        <h1>Know the profit<br>before you buy it.</h1>
+        <p class="lede">Scan a barcode in the aisle and NAB Amp pulls the live buy box price, referral and fulfillment fees straight from Amazon, then tells you your net profit, ROI, and the most you should pay.</p>
+        <div class="cta-row">
+          <span class="btn btn-primary">Start free</span>
+          <span class="btn btn-ghost">See a scan</span>
+        </div>
+        <p class="soon-note">Coming soon</p>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-figure">1.2s</span>
+            <span class="stat-label">Scan to answer</span>
+          </div>
+          <div class="stat">
+            <span class="stat-figure">FBA + FBM</span>
+            <span class="stat-label">Both channels, side by side</span>
+          </div>
+          <div class="stat">
+            <span class="stat-figure">Sheets</span>
+            <span class="stat-label">Every sale logged</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone" aria-hidden="true">
+        <div class="phone-bar">
+          <span class="phone-bar-title">NAB Amp</span>
+          <span class="phone-bar-meta">FBA</span>
+        </div>
+        <div class="phone-body">
+          <div class="viewport">
+            <div class="reticle">
+              <i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i>
+              <i class="scanline"></i>
+            </div>
+          </div>
+          <div class="panel">
+            <span class="panel-label">Net profit / unit</span>
+            <div class="figure-row">
+              <span class="figure">$12.84</span>
+              <span class="figure-side">128% ROI</span>
+            </div>
+            <div class="rule"></div>
+            <div class="kv">
+              <span class="kv-label">Max buy price</span>
+              <span class="kv-value">$21.83</span>
+            </div>
+          </div>
+          <div class="fees">
+            <div class="fee-row"><span class="label">Referral fee</span><span class="value">−$5.25</span></div>
+            <div class="fee-row"><span class="label">Fulfillment fee</span><span class="value">−$6.05</span></div>
+            <div class="fee-row"><span class="label">Inbound shipping</span><span class="value">−$0.85</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="how">
+      <div class="section-head">
+        <span class="kicker">How it works</span>
+        <h2>Three taps in the aisle</h2>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <span class="step-num">01</span>
+          <h3>Scan</h3>
+          <p>Point the camera at any barcode, or type an ASIN or UPC. Eligibility, sales rank, and the live buy box price come back immediately.</p>
+        </article>
+        <article class="card">
+          <span class="step-num">02</span>
+          <h3>Check the number</h3>
+          <p>Enter your cost. Net profit, ROI, and max buy price appear for FBA and FBM, with every fee itemised underneath.</p>
+        </article>
+        <article class="card">
+          <span class="step-num">03</span>
+          <h3>Log it</h3>
+          <p>Save the item to your Cost Reference sheet. When it sells, NAB Amp matches the cost and writes the realised profit to your Sales Log.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-head">
+        <span class="kicker">Features</span>
+        <h2>Built for people who source in person</h2>
+      </div>
+      <div class="grid-2">
+        <article class="card feature">
+          <h3>Real Amazon fees, not estimates</h3>
+          <p>Referral and fulfillment fees come from Amazon's Product Fees API at the current live price, so the maths matches Seller Central.</p>
+        </article>
+        <article class="card feature">
+          <h3>Max buy price, worked backwards</h3>
+          <p>Set the profit you need per unit and NAB Amp tells you the ceiling to pay — the number you actually want standing in a store.</p>
+        </article>
+        <article class="card feature">
+          <h3>Sales sync to Google Sheets</h3>
+          <p>Shipped orders pull in on demand, dedup automatically, and land in your own sheet with cost and profit filled in. Refunds included.</p>
+        </article>
+        <article class="card feature">
+          <h3>Two-year backfill</h3>
+          <p>Import your full order history from any start date through the same pipeline. Already-logged sales are skipped, never duplicated.</p>
+        </article>
+        <article class="card feature">
+          <h3>Multiple buyers</h3>
+          <p>Switch profiles in the header so each person's lookups and costs stay attributed when you source as a pair or a team.</p>
+        </article>
+        <article class="card feature">
+          <h3>Installs to your home screen</h3>
+          <p>A progressive web app: no app store, opens full screen, and keeps working on the patchy signal at the back of a warehouse.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="section-head">
+        <span class="kicker">Pricing</span>
+        <h2>One price, both channels</h2>
+      </div>
+      <div class="plans">
+        <div class="plan">
+          <div class="plan-head">
+            <div class="plan-name-row"><span class="plan-name">Free</span></div>
+            <div class="price-row"><span class="price">$0</span><span class="per">/ month</span></div>
+          </div>
+          <ul>
+            <li>25 scans a month</li>
+            <li>FBA and FBM profit maths</li>
+            <li>Lookup history on device</li>
+          </ul>
+          <span class="btn btn-ghost">Get started</span>
+          <p class="soon-note">Coming soon</p>
+        </div>
+        <div class="plan plan-pro">
+          <div class="plan-head">
+            <div class="plan-name-row">
+              <span class="plan-name">Pro</span>
+              <span class="badge">Most sellers</span>
+            </div>
+            <div class="price-row"><span class="price">$19</span><span class="per">/ month</span></div>
+          </div>
+          <ul>
+            <li>Unlimited scans</li>
+            <li>Google Sheets sales sync</li>
+            <li>Two-year history import</li>
+            <li>Multiple buyer profiles</li>
+          </ul>
+          <span class="btn btn-primary">Start free trial</span>
+          <p class="soon-note">Coming soon</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="closer">
+      <div class="closer-inner">
+        <div>
+          <h2>Stop guessing at the shelf.</h2>
+          <p>Coming soon. No card, no app store.</p>
+        </div>
+        <span class="btn btn-primary">Coming soon</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark mark-sm" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M2 6.2V3.8A1.8 1.8 0 0 1 3.8 2h2.4M13.8 2h2.4A1.8 1.8 0 0 1 18 3.8v2.4M18 13.8v2.4A1.8 1.8 0 0 1 16.2 18h-2.4M6.2 18H3.8A1.8 1.8 0 0 1 2 16.2v-2.4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M1 10h18" stroke="#22c55e" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="footer-name">NAB Amp</span>
+    </div>
+    <p class="disclaimer">Fee figures are Amazon estimates. Verify against the FBA Revenue Calculator before purchasing decisions.</p>
+  </div>
+</footer>
+
+</body>
+</html>
