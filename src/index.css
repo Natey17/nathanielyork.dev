@@ -1,18 +1,17 @@
-/* Cream / Beige / Deep Ocean palette. Core tones are the three named
-   colors; --color-surface and --color-border are light tints of Cream/Beige
-   for depth, and --color-text-muted is Deep Ocean at reduced opacity —
-   no hues outside the three are introduced. */
+/* Dark monochrome palette — near-black background, off-white text, white
+   as the single accent/pop color. --color-surface and --color-bg-alt are
+   light tints of the background for card/pill depth. */
 :root {
-  --color-bg: #eee8df; /* Cream */
-  --color-surface: #f6f2ec; /* Cream, lightened — card backgrounds */
-  --color-bg-alt: #c4bcb0; /* Beige — pill fills, photo placeholder */
-  --color-border: #d9d2c7; /* Cream/Beige blend — hairlines */
-  --color-text: #2c365a; /* Deep Ocean */
-  --color-text-muted: rgba(44, 54, 90, 0.62); /* Deep Ocean, muted */
-  --color-accent: #2c365a; /* Deep Ocean */
-  --focus-ring: #2c365a;
+  --color-bg: #101114;
+  --color-surface: #1a1b20;
+  --color-bg-alt: #24262c;
+  --color-border: rgba(244, 243, 240, 0.12);
+  --color-text: #f4f3f0;
+  --color-text-muted: rgba(244, 243, 240, 0.6);
+  --color-accent: #ffffff;
+  --focus-ring: #ffffff;
 
-  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
   --font-sans:
     system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
@@ -21,6 +20,7 @@
   --font-size-lg: 1.15rem;
   --font-size-xl: 1.5rem;
   --font-size-2xl: clamp(2.5rem, 6vw, 4.5rem);
+  --font-size-3xl: clamp(3rem, 9vw, 6.5rem);
 
   --space-1: 0.5rem;
   --space-2: 1rem;
