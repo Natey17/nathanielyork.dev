@@ -1,0 +1,128 @@
+/* Cream / Beige / Deep Ocean palette. Core tones are the three named
+   colors; --color-surface and --color-border are light tints of Cream/Beige
+   for depth, and --color-text-muted is Deep Ocean at reduced opacity —
+   no hues outside the three are introduced. */
+:root {
+  --color-bg: #eee8df; /* Cream */
+  --color-surface: #f6f2ec; /* Cream, lightened — card backgrounds */
+  --color-bg-alt: #c4bcb0; /* Beige — pill fills, photo placeholder */
+  --color-border: #d9d2c7; /* Cream/Beige blend — hairlines */
+  --color-text: #2c365a; /* Deep Ocean */
+  --color-text-muted: rgba(44, 54, 90, 0.62); /* Deep Ocean, muted */
+  --color-accent: #2c365a; /* Deep Ocean */
+  --focus-ring: #2c365a;
+
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --font-size-sm: 0.9rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.15rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: clamp(2.5rem, 6vw, 4.5rem);
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --space-6: 6rem;
+
+  --radius-sm: 4px;
+  --radius-md: 10px;
+
+  --max-width: 1200px;
+
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 0.2s;
+  --duration-base: 0.5s;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-2);
+  z-index: 100;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  transition: top var(--duration-fast) var(--ease-standard);
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
