@@ -1,4 +1,4 @@
-# Nathaniel York
+# nathanielyork.dev
 
 My personal portfolio — a quick look at my work experience and projects.
 
