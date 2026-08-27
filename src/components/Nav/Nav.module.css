@@ -1,68 +1,97 @@
 .nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(16, 17, 20, 0.8);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--color-border);
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
 }
 
 .inner {
-  max-width: var(--max-width);
+  max-width: var(--page);
   margin-inline: auto;
-  padding: var(--space-2) var(--space-3);
+  padding: 26px var(--gutter);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: 24px;
 }
 
-.mark {
+.brand {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  color: var(--text);
+  background: var(--bg);
+  padding: 6px 10px;
+  border: 1px solid rgba(233, 233, 237, 0.14);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+
+.brand:hover {
+  color: var(--text);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 1px;
+  display: block;
 }
 
 .links {
-  display: none;
+  display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 5px;
+}
+
+.link,
+.contact {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 7px 13px;
+  transition: color 0.2s, background 0.2s;
 }
 
 .link {
-  font-size: var(--font-size-sm);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  transition: color var(--duration-fast) var(--ease-standard);
+  color: var(--text-3);
 }
 
 .link:hover {
-  color: var(--color-text);
+  color: var(--bg);
+  background: var(--accent);
 }
 
-.cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 1.1rem;
-  border-radius: 999px;
-  background: var(--color-text);
-  color: var(--color-bg);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  transition: transform var(--duration-fast) var(--ease-standard);
+.contact {
+  color: var(--bg);
+  background: var(--text);
 }
 
-.cta:hover {
-  transform: translateY(-1px);
+.contact:hover {
+  color: var(--bg);
+  background: var(--accent);
 }
 
-@media (min-width: 700px) {
+@media (max-width: 700px) {
   .links {
-    display: flex;
+    gap: 2px;
+  }
+  .link,
+  .contact {
+    padding: 7px 9px;
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (max-width: 640px) {
+  .link {
+    display: none;
   }
 }

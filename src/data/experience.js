@@ -1,6 +1,7 @@
 export const EXPERIENCE = [
   {
     id: "kaleon",
+    num: "01",
     role: "Software Engineering Intern",
     company: "Kaleon",
     location: "Remote",
@@ -15,9 +16,10 @@ export const EXPERIENCE = [
   },
   {
     id: "design-hub",
+    num: "02",
     role: "Software Engineer Intern",
-    company: "Design Hub at American River College",
-    location: "Carmichael, CA",
+    company: "Design Hub",
+    location: "American River College",
     dates: "Sep 2024 – May 2025",
     logo: "/design-hub-logo.png",
     stack: ["C++", "Google App Scripts"],

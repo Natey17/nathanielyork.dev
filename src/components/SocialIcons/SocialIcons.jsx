@@ -1,37 +1,28 @@
 import { LINKS } from "../../data/links";
+import { GitHubIcon, LinkedInIcon, EmailIcon } from "./icons";
 import styles from "./SocialIcons.module.css";
-import { GitHubIcon, LinkedInIcon, MailIcon } from "./icons";
+
+const ITEMS = [
+  { href: LINKS.github, label: "GitHub", Icon: GitHubIcon, external: true },
+  { href: LINKS.linkedin, label: "LinkedIn", Icon: LinkedInIcon, external: true },
+  { href: LINKS.email, label: "Email", Icon: EmailIcon, external: false },
+];
 
 export function SocialIcons() {
   return (
     <ul className={styles.list}>
-      <li>
-        <a
-          className={styles.link}
-          href={LINKS.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub"
-        >
-          <GitHubIcon />
-        </a>
-      </li>
-      <li>
-        <a
-          className={styles.link}
-          href={LINKS.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn"
-        >
-          <LinkedInIcon />
-        </a>
-      </li>
-      <li>
-        <a className={styles.link} href={`mailto:${LINKS.email}`} aria-label="Email">
-          <MailIcon />
-        </a>
-      </li>
+      {ITEMS.map(({ href, label, Icon, external }) => (
+        <li key={label}>
+          <a
+            href={href}
+            aria-label={label}
+            className={styles.link}
+            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
+            <Icon />
+          </a>
+        </li>
+      ))}
     </ul>
   );
 }

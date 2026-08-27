@@ -1,0 +1,95 @@
+.section {
+  max-width: var(--page);
+  margin-inline: auto;
+  padding: 96px var(--gutter) 40px;
+}
+
+.head {
+  margin-bottom: 56px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.lead {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  line-height: 1.42;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 26px;
+  max-width: 40ch;
+}
+
+.sub {
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: rgba(233, 233, 237, 0.7);
+  margin: 0 0 30px;
+  max-width: 56ch;
+}
+
+.placeholder {
+  border: 1px dashed var(--border-2);
+  padding: 22px 24px;
+  max-width: 56ch;
+}
+
+.placeholderLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin: 0 0 10px;
+}
+
+.placeholderBody {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-3);
+  margin: 0;
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding: 15px 0;
+  border-top: 1px solid var(--border);
+}
+
+.factKey {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.factVal {
+  font-size: 15px;
+  color: rgba(233, 233, 237, 0.78);
+}
+
+.endRule {
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}

@@ -1,26 +1,27 @@
-import { MotionConfig } from "framer-motion";
 import { Nav } from "./components/Nav/Nav";
 import { Hero } from "./components/Hero/Hero";
 import { Experience } from "./components/Experience/Experience";
 import { Projects } from "./components/Projects/Projects";
+import { About } from "./components/About/About";
 import { Footer } from "./components/Footer/Footer";
-import { EASE_STANDARD } from "./animations/variants";
 
-function App() {
+export default function App() {
   return (
-    <MotionConfig reducedMotion="user" transition={{ ease: EASE_STANDARD }}>
-      <a className="skip-link" href="#main-content">
-        Skip to content
-      </a>
+    <>
       <Nav />
-      <main id="main-content">
+      <main id="top">
         <Hero />
+        <div className="rule">
+          <div />
+        </div>
         <Experience />
         <Projects />
+        <div className="rule">
+          <div />
+        </div>
+        <About />
       </main>
       <Footer />
-    </MotionConfig>
+    </>
   );
 }
-
-export default App;
