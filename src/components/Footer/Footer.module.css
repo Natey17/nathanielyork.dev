@@ -3,7 +3,7 @@
 }
 
 .cta {
-  padding: var(--space-6) var(--space-3) var(--space-5);
+  padding: var(--space-4) var(--space-3);
   max-width: var(--max-width);
   margin-inline: auto;
   display: flex;
