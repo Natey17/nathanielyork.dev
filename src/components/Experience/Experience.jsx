@@ -7,8 +7,8 @@ export function Experience() {
   return (
     <Section id="experience" title="Experience">
       <div className={styles.list}>
-        {EXPERIENCE.map((entry, index) => (
-          <ExperienceItem key={entry.id} {...entry} defaultOpen={index === 0} />
+        {EXPERIENCE.map((entry) => (
+          <ExperienceItem key={entry.id} {...entry} />
         ))}
       </div>
     </Section>

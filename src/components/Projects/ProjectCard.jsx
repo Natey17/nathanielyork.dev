@@ -39,13 +39,6 @@ export function ProjectCard({
           <ChevronIcon open={isOpen} />
         </span>
       </button>
-      <ul className={styles.stack}>
-        {stack.map((item) => (
-          <li key={item} className={styles.tag}>
-            {item}
-          </li>
-        ))}
-      </ul>
       <motion.div
         id={panelId}
         className={styles.panel}
@@ -53,6 +46,13 @@ export function ProjectCard({
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       >
+        <ul className={styles.stack}>
+          {stack.map((item) => (
+            <li key={item} className={styles.tag}>
+              {item}
+            </li>
+          ))}
+        </ul>
         <ul className={styles.bullets}>
           {bullets.map((bullet) => (
             <li key={bullet} className={styles.bullet}>

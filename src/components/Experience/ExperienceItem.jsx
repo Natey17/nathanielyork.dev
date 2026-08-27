@@ -35,15 +35,6 @@ export function ExperienceItem({
         </span>
         <ChevronIcon open={isOpen} />
       </button>
-      {stack && (
-        <ul className={styles.stack}>
-          {stack.map((item) => (
-            <li key={item} className={styles.tag}>
-              {item}
-            </li>
-          ))}
-        </ul>
-      )}
       <motion.div
         id={panelId}
         className={styles.panel}
@@ -51,6 +42,15 @@ export function ExperienceItem({
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       >
+        {stack && (
+          <ul className={styles.stack}>
+            {stack.map((item) => (
+              <li key={item} className={styles.tag}>
+                {item}
+              </li>
+            ))}
+          </ul>
+        )}
         <ul className={styles.bullets}>
           {bullets.map((bullet) => (
             <li key={bullet} className={styles.bullet}>

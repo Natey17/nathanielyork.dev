@@ -7,8 +7,8 @@ export function Projects() {
   return (
     <Section id="projects" title="Projects">
       <div className={styles.list}>
-        {PROJECTS.map((project, index) => (
-          <ProjectCard key={project.id} {...project} defaultOpen={index === 0} />
+        {PROJECTS.map((project) => (
+          <ProjectCard key={project.id} {...project} />
         ))}
       </div>
     </Section>
