@@ -18,8 +18,6 @@ export function About() {
             Focused on building and stress-testing ML systems under real-world conditions,
             not just in a notebook.
           </p>
-
-          <p className={styles.comingSoon}>Coming soon</p>
         </div>
 
         <div className={styles.facts}>
