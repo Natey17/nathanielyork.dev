@@ -19,14 +19,19 @@ export function About() {
             not just in a notebook.
           </p>
 
-          {/* TODO: replace this block with your own copy */}
-          <div className={styles.placeholder}>
-            <p className={styles.placeholderLabel}>Placeholder</p>
-            <p className={styles.placeholderBody}>
-              Two or three paragraphs in your own voice go here — how you work, what you
-              want to build next, anything the rest of the page doesn't already say.
-            </p>
-          </div>
+          <p className={styles.sub}>
+            What pulled me into this work wasn&rsquo;t a single &ldquo;aha&rdquo; moment. It
+            was noticing how much of a difference the right tool makes for someone who&rsquo;s
+            stuck. At Kaleon that&rsquo;s a community college student trying to figure out if
+            their credits transfer. At Design Hub it was teaching myself just enough
+            automation to save a club a few hours a week. Small stakes, real relief.
+          </p>
+          <p className={styles.sub}>
+            I like the parts of software that touch people directly: UX details,
+            accessibility, the stuff that&rsquo;s easy to skip and obvious when it&rsquo;s
+            missing. Statistics and backend work are where I spend most of my time, but
+            that&rsquo;s the reason I care whether it&rsquo;s right.
+          </p>
         </div>
 
         <div className={styles.facts}>
