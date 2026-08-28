@@ -20,17 +20,13 @@ export function About() {
           </p>
 
           <p className={styles.sub}>
-            What pulled me into this work wasn&rsquo;t a single &ldquo;aha&rdquo; moment. It
-            was noticing how much of a difference the right tool makes for someone who&rsquo;s
-            stuck. At Kaleon that&rsquo;s a community college student trying to figure out if
-            their credits transfer. At Design Hub it was teaching myself just enough
-            automation to save a club a few hours a week. Small stakes, real relief.
-          </p>
-          <p className={styles.sub}>
-            I like the parts of software that touch people directly: UX details,
-            accessibility, the stuff that&rsquo;s easy to skip and obvious when it&rsquo;s
-            missing. Statistics and backend work are where I spend most of my time, but
-            that&rsquo;s the reason I care whether it&rsquo;s right.
+            My background includes full-stack software development, applied machine
+            learning, and API-driven automation. I thrive in fast-paced environments that
+            demand quick problem-solving, from a startup team shipping to real users to
+            research pipelines built to catch their own mistakes. Lately my work has
+            centered on real-world applications of machine learning, and I&rsquo;m drawn to
+            keep applying those skills in domains where the technical challenges are still
+            unsettled.
           </p>
         </div>
 
