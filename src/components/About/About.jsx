@@ -19,15 +19,7 @@ export function About() {
             not just in a notebook.
           </p>
 
-          <p className={styles.sub}>
-            My background includes full-stack software development, applied machine
-            learning, and API-driven automation. I thrive in fast-paced environments that
-            demand quick problem-solving, from a startup team shipping to real users to
-            research pipelines built to catch their own mistakes. Lately my work has
-            centered on real-world applications of machine learning, and I&rsquo;m drawn to
-            keep applying those skills in domains where the technical challenges are still
-            unsettled.
-          </p>
+          <p className={styles.comingSoon}>Coming soon</p>
         </div>
 
         <div className={styles.facts}>
