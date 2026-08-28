@@ -1,5 +1,5 @@
 # nathanielyork.dev
 
-My personal portfolio — a quick look at my work experience and projects.
+My personal portfolio (a work in progress)
 
 **Live site:** [nathanielyork.dev](https://nathanielyork.dev)
