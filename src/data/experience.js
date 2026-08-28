@@ -7,7 +7,7 @@ export const EXPERIENCE = [
     location: "Remote",
     dates: "Aug 2026 – Present",
     logo: "/kaleon-logo.png",
-    stack: null,
+    stack: ["React", "TypeScript", "Express", "Supabase", "Tailwind CSS", "DeepSeek API"],
     bullets: [
       "Contribute across a 3-person engineering team building a transfer-planning platform helping community college students plan degree and transfer pathways",
       "Work on UX polish, accessibility readiness testing (keyboard navigation, screen-reader semantics, contrast), and demo reliability hardening ahead of institutional pilots",
