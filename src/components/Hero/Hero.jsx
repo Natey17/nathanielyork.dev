@@ -32,13 +32,7 @@ export function Hero() {
             <img src="/headshot.jpg" alt="Nathaniel York" className={styles.photo} />
           ) : (
             <div className={`${styles.photoSlot} slot`}>
-              <span>
-                headshot
-                <br />
-                4:5 portrait
-                <br />
-                shot on dark
-              </span>
+              <span>Coming soon</span>
             </div>
           )}
         </div>
