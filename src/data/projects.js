@@ -25,9 +25,8 @@ export const PROJECTS = [
   {
     id: "tracewell",
     name: "Tracewell",
-    // icon/preview pending — cover image to be added
-    icon: null,
-    preview: null,
+    icon: "/tracewell-icon.png",
+    preview: "/tracewell-preview.png",
     tagline:
       "One stuck record can stall a pipeline without erroring. Tracewell catches it, traces the cause, and writes up what it found.",
     tags: [
