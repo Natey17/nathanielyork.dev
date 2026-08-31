@@ -28,7 +28,7 @@ export const PROJECTS = [
     icon: "/tracewell-icon.png",
     preview: "/tracewell-preview.png",
     tagline:
-      "One stuck record can stall a pipeline without erroring. Tracewell catches it, traces the cause, and writes up what it found.",
+      "One stuck record can stall a pipeline without erroring. Tracewell catches it, traces the cause, and writes up what it found. 106 tests, verified in CI.",
     tags: [
       "TypeScript",
       "Express",

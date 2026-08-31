@@ -173,6 +173,31 @@ a:hover{color:var(--color-accent)}
 </div>
 </section>
 
+<section style="padding:0 56px 80px">
+<div style="border-top:2px solid var(--color-divider);padding-top:40px">
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 34px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Testing & CI</h2>
+<div style="display:flex;align-items:stretch;flex-wrap:wrap;gap:0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider)">
+<div style="flex:1;min-width:180px;padding:26px 24px 26px 0">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:34px;line-height:1;margin-bottom:10px">106</div>
+<div style="font-size:12.5px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 65%,transparent)">tests, all passing in CI &mdash; 79 backend, 27 frontend</div>
+</div>
+<div style="flex:1;min-width:180px;padding:26px 24px;border-left:1px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:34px;line-height:1;margin-bottom:10px">94.5%</div>
+<div style="font-size:12.5px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 65%,transparent)">backend statement coverage (97.7% lines) &mdash; real integration tests against a disposable Postgres database, not mocked Prisma</div>
+</div>
+<div style="flex:1;min-width:180px;padding:26px 24px;border-left:1px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:34px;line-height:1;margin-bottom:10px">42.5%</div>
+<div style="font-size:12.5px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 65%,transparent)">frontend statement coverage &mdash; components, hooks and the API client are tested; the four pages that compose them aren't, and the README says so directly</div>
+</div>
+<div style="flex:1;min-width:180px;padding:26px 0 26px 24px;border-left:1px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:34px;line-height:1;margin-bottom:10px">CI</div>
+<div style="font-size:12.5px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 65%,transparent)">every push/PR builds and runs the full suite against a real Postgres service container on GitHub's runners</div>
+</div>
+</div>
+<p style="font-size:14px;line-height:1.65;max-width:74ch;margin:28px 0 0;color:color-mix(in srgb,var(--color-text) 70%,transparent);text-wrap:pretty">One test is a direct regression check for a bug this project actually hit live: a Claude response once omitted a required field and crashed the database write. That's now caught by a Zod validation layer alongside the strict tool schema &mdash; and writing these tests separately surfaced a real gap in the TypeScript config that was letting test files leak into the production build, since fixed.</p>
+</div>
+</section>
+
 <section style="background:#201e1d;color:#f8f4f4;padding:80px 56px 88px">
 <div style="display:grid;grid-template-columns:0.85fr 1.4fr;gap:56px;align-items:start">
 <div>
@@ -245,14 +270,13 @@ a:hover{color:var(--color-accent)}
 </div>
 <div style="padding:72px 56px 80px 48px;border-left:1px solid var(--color-divider)">
 <div onClick="{{ toggleScope }}" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px">
-<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Deliberately out of scope · 5</h2>
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Deliberately out of scope · 4</h2>
 <span style="font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--color-accent);transition:transform .22s ease;transform:{{ scopeRot }}">+</span>
 </div>
 <p style="font-size:14.5px;line-height:1.65;margin:0 0 22px;max-width:54ch;color:color-mix(in srgb,var(--color-text) 78%,transparent);text-wrap:pretty">Built to demonstrate the concept end to end, including a live, unscripted investigation. It does not run against production traffic, and the gaps are on purpose.</p>
 <sc-if value="{{ scopeOpen }}">
 <div style="display:flex;flex-direction:column;gap:14px;animation:tl-open .35s ease both">
 <div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No auth</strong> — the API and dashboard never leave localhost.</span></div>
-<div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No automated tests</strong> — verified against live scans and live agent runs. Production would need tests on detector thresholds and a recorded transcript for the tool loop.</span></div>
 <div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No cost guardrails</strong> beyond a 12-call cap per investigation.</span></div>
 <div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No multi-instance coordination</strong> — two replicas would each scan; a real deployment needs an advisory lock.</span></div>
 <div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>Polling, not push</strong> — fine at this scale, not at many concurrent viewers.</span></div>
