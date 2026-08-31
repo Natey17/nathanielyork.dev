@@ -22,4 +22,23 @@ export const PROJECTS = [
     url: "/projects/edgeine",
     github: null,
   },
+  {
+    id: "tracewell",
+    name: "Tracewell",
+    // icon/preview pending — cover image to be added
+    icon: null,
+    preview: null,
+    tagline:
+      "One stuck record can stall a pipeline without erroring. Tracewell catches it, traces the cause, and writes up what it found.",
+    tags: [
+      "TypeScript",
+      "Express",
+      "Prisma · Postgres",
+      "React",
+      "Claude tool-use",
+      "Docker Compose",
+    ],
+    url: "/projects/tracewell",
+    github: "https://github.com/Natey17/Tracewell",
+  },
 ];

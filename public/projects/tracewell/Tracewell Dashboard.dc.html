@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-838972df-717d-4603-b195-2653d4570b84/styles.css">
+<script src="_ds/modernist-838972df-717d-4603-b195-2653d4570b84/_ds_bundle.js"></script>
+<style>
+body{margin:0}
+[data-theme="dark"]{--color-bg:#181716;--color-surface:#232120;--color-text:#f5f3f2;--color-divider:color-mix(in srgb,#f5f3f2 34%,transparent);--color-neutral-100:#2d2b2b;--color-neutral-200:#363333;--color-neutral-800:#d7d3d3;--color-accent-100:#3a1a12;--color-accent-800:#ffc4b8;--color-accent-2-100:#3a1a12;--color-accent-2-800:#ffc4b9}
+@keyframes tw-pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes tw-spin{to{transform:rotate(360deg)}}
+@keyframes tw-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tw-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes tw-wipe{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes tw-fade{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);font-size:15px">
+
+<header class="nav" style="position:sticky;top:0;z-index:5;background:var(--color-bg);gap:24px">
+<div class="nav-brand" style="margin-right:32px;letter-spacing:-0.02em">TRACEWELL<span style="color:var(--color-accent)">.</span></div>
+<nav style="display:flex;gap:2px;margin-right:auto">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3">
+<button onClick="{{ n.go }}" style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;padding:7px 13px;border:0;cursor:pointer;background:{{ n.bg }};color:{{ n.fg }}" style-hover="background:color-mix(in srgb,var(--color-text) 8%,transparent)">{{ n.label }}</button>
+</sc-for>
+</nav>
+<div style="display:flex;align-items:center;gap:14px">
+<div style="display:flex;align-items:center;gap:7px;font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">
+<span style="width:7px;height:7px;background:var(--color-accent);animation:tw-pulse 1.6s ease-in-out infinite"></span>
+<span style="font-variant-numeric:tabular-nums">scanner live · last scan {{ lastScanLabel }}</span>
+</div>
+<button class="btn btn-secondary" onClick="{{ scan }}" style="font-size:12px;padding:6px 12px">{{ scanLabel }}</button>
+<button class="btn btn-secondary btn-icon" onClick="{{ toggleTheme }}" title="Toggle theme" style="font-size:12px;width:32px;height:32px">{{ themeGlyph }}</button>
+</div>
+</header>
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;padding:72px 48px 44px;animation:tw-rise .5s cubic-bezier(.2,.7,.3,1) both">
+<div>
+<h1 style="font-size:44px;margin:0 0 8px">Pipeline health</h1>
+<p style="margin:0;font-size:15px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">order-sync · production · 30s scan interval</p>
+</div>
+<div style="text-align:left">
+<div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);margin-bottom:4px">Pipeline state</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1.1">STALLED</div>
+</div>
+</div>
+
+<div style="border-top:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider);display:grid;grid-template-columns:repeat(3,1fr)">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="6">
+<div style="padding:34px 40px 38px;border-left:1px solid var(--color-divider);border-top:{{ s.rowRule }};animation:tw-rise .55s cubic-bezier(.2,.7,.3,1) both;animation-delay:{{ s.delay }}">
+<div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:14px">{{ s.label }}</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:40px;line-height:1;font-variant-numeric:tabular-nums;color:{{ s.color }}">{{ s.value }}</div>
+<div style="font-size:12px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ s.hint }}</div>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{ showStrip }}" hint-placeholder-val="{{ true }}">
+<section style="padding:56px 48px 52px;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px">
+<h2 style="font-size:20px;margin:0">Sequence lane · #292 → #351</h2>
+<div style="display:flex;gap:16px;font-size:11px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:var(--color-neutral-800)"></span>synced</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:var(--color-accent)"></span>stuck</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;background:var(--color-neutral-400)"></span>queued</span>
+</div>
+</div>
+<div style="display:flex;align-items:flex-end;gap:3px;height:104px">
+<sc-for list="{{ lane }}" as="t" hint-placeholder-count="60">
+<div title="{{ t.title }}" style="flex:1;height:{{ t.h }}%;background:{{ t.c }};border-left:{{ t.mark }};transform-origin:bottom;animation:tw-grow .5s cubic-bezier(.2,.7,.3,1) both;animation-delay:{{ t.delay }}"></div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:16px;font-size:11px;font-variant-numeric:tabular-nums;color:color-mix(in srgb,var(--color-text) 55%,transparent)">
+<span>cursor held at #300 for 3d 04h — nothing past #301 has been attempted</span>
+<span>#351</span>
+</div>
+</section>
+</sc-if>
+
+<div style="display:grid;grid-template-columns:1.15fr 1fr;border-bottom:2px solid var(--color-divider)">
+<section style="padding:56px 48px 60px">
+<h2 style="font-size:20px;margin:0 0 30px">Orders synced per day · 14 days</h2>
+<div style="display:flex;align-items:flex-end;gap:6px;height:170px;border-bottom:2px solid var(--color-divider)">
+<sc-for list="{{ chart }}" as="d" hint-placeholder-count="14">
+<div title="{{ d.title }}" style="flex:1;height:{{ d.h }}%;min-height:2px;background:{{ d.c }};transform-origin:bottom;animation:tw-grow .6s cubic-bezier(.2,.7,.3,1) both;animation-delay:{{ d.delay }}"></div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:14px;font-size:11px;font-variant-numeric:tabular-nums;color:color-mix(in srgb,var(--color-text) 55%,transparent)">
+<span>{{ chartFrom }}</span><span>three days at zero</span><span>{{ chartTo }}</span>
+</div>
+</section>
+<section style="padding:56px 48px 60px;border-left:1px solid var(--color-divider)">
+<h2 style="font-size:20px;margin:0 0 30px">Orders by status</h2>
+<sc-for list="{{ statusBars }}" as="b" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:170px 1fr 48px;align-items:center;gap:18px;padding:18px 0;border-bottom:1px solid var(--color-divider)">
+<span style="font-size:11px;letter-spacing:0.06em;text-transform:uppercase">{{ b.label }}</span>
+<span style="height:12px;background:color-mix(in srgb,var(--color-text) 8%,transparent)"><span style="display:block;height:12px;width:{{ b.w }}%;background:{{ b.c }};transform-origin:left;animation:tw-wipe .7s cubic-bezier(.2,.7,.3,1) both;animation-delay:{{ b.delay }}"></span></span>
+<span style="font-size:15px;font-variant-numeric:tabular-nums;text-align:right">{{ b.count }}</span>
+</div>
+</sc-for>
+</section>
+</div>
+
+<section style="padding:64px 48px 110px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:14px;border-bottom:2px solid var(--color-divider);margin-bottom:0">
+<div style="display:flex;align-items:baseline;gap:14px">
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0">Open incidents</h2>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:12px;color:var(--color-accent);font-variant-numeric:tabular-nums">{{ openCount }}</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px">
+<button class="btn btn-ghost" onClick="{{ toggleAll }}" style="font-size:12px">{{ expandAllLabel }}</button>
+<button class="btn btn-ghost" onClick="{{ goIncidents }}" style="font-size:12px">All incidents →</button>
+</div>
+</div>
+<sc-for list="{{ openIncidents }}" as="i" hint-placeholder-count="3">
+<div style="border-bottom:1px solid var(--color-divider);animation:tw-rise .55s cubic-bezier(.2,.7,.3,1) both;animation-delay:{{ i.delay }}">
+<div onClick="{{ i.toggle }}" style="cursor:pointer;padding:22px 4px;display:grid;grid-template-columns:4px 22px 1fr auto;gap:18px;align-items:center;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="height:26px;background:{{ i.sevColor }}"></span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:15px;color:var(--color-accent);transition:transform .2s ease;transform:{{ i.chevron }}">+</span>
+<div style="display:flex;align-items:baseline;gap:14px;min-width:0">
+<span style="font-size:11px;font-variant-numeric:tabular-nums;color:color-mix(in srgb,var(--color-text) 45%,transparent);flex:none">{{ i.ref }}</span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.title }}</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px;flex:none">
+<span style="font-size:11px;letter-spacing:0.04em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 45%,transparent)">{{ i.age }}</span>
+<span class="tag {{ i.sevTag }}">{{ i.severity }}</span>
+<span class="tag tag-neutral">{{ i.status }}</span>
+</div>
+</div>
+<sc-if value="{{ i.isOpen }}">
+<div style="padding:4px 4px 30px 66px;animation:tw-fade .3s ease both">
+<div style="font-size:14.5px;line-height:1.65;color:color-mix(in srgb,var(--color-text) 75%,transparent);max-width:66ch;text-wrap:pretty">{{ i.summary }}</div>
+<div style="display:flex;gap:10px;margin:18px 0 20px;font-size:11px;letter-spacing:0.04em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent)">
+<span>{{ i.typeLabel }}</span><span>·</span><span>{{ i.reportLabel }}</span><span>·</span><span>{{ i.detector }}</span>
+</div>
+<button class="btn btn-secondary" onClick="{{ i.open }}" style="font-size:12.5px">Open incident →</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</section>
+</div>
+</sc-if>
+
+<sc-if value="{{ isIncidents }}">
+<div style="padding:72px 48px 110px">
+<h1 style="font-size:44px;margin:0 0 8px;animation:tw-rise .5s cubic-bezier(.2,.7,.3,1) both">Incidents</h1>
+<p style="margin:0 0 36px;font-size:15px;color:color-mix(in srgb,var(--color-text) 60%,transparent);animation:tw-rise .5s cubic-bezier(.2,.7,.3,1) both;animation-delay:.05s">anomalies flagged by the scanner, with agent-written root-cause reports</p>
+<div style="display:flex;gap:2px;margin-bottom:10px;border:1px solid var(--color-divider);width:fit-content">
+<sc-for list="{{ statusFilters }}" as="f" hint-placeholder-count="5">
+<button onClick="{{ f.pick }}" style="border:0;cursor:pointer;padding:7px 14px;font-size:12px;letter-spacing:0.04em;font-family:var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+</sc-for>
+</div>
+<sc-for list="{{ filteredIncidents }}" as="i" hint-placeholder-count="4">
+<div onClick="{{ i.open }}" style="cursor:pointer;border-top:2px solid var(--color-divider);padding:32px 0;display:grid;grid-template-columns:4px 1fr auto;gap:26px;align-items:start;transition:background .18s ease;animation:tw-rise .55s cubic-bezier(.2,.7,.3,1) both;animation-delay:{{ i.delay }}" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="height:100%;min-height:52px;background:{{ i.sevColor }}"></span>
+<div>
+<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px">
+<span style="font-size:11px;font-variant-numeric:tabular-nums;color:color-mix(in srgb,var(--color-text) 45%,transparent)">{{ i.ref }}</span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:19px">{{ i.title }}</span>
+</div>
+<div style="font-size:14px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 70%,transparent);max-width:66ch;text-wrap:pretty">{{ i.summary }}</div>
+<div style="display:flex;gap:10px;margin-top:16px;font-size:11px;letter-spacing:0.04em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent)">
+<span>{{ i.typeLabel }}</span><span>·</span><span>detected {{ i.age }}</span><span>·</span><span>{{ i.reportLabel }}</span>
+</div>
+</div>
+<div style="display:flex;gap:6px;padding-right:4px">
+<span class="tag {{ i.sevTag }}">{{ i.severity }}</span>
+<span class="tag tag-neutral">{{ i.status }}</span>
+</div>
+</div>
+</sc-for>
+<div style="border-top:2px solid var(--color-divider)"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDetail }}">
+<div style="padding:20px 16px 48px">
+<button class="btn btn-ghost" onClick="{{ goIncidents }}" style="font-size:12px;margin-bottom:14px">← All incidents</button>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:32px;padding-bottom:18px;border-bottom:2px solid var(--color-divider)">
+<div>
+<div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent);margin-bottom:6px">{{ cur.ref }} · {{ cur.typeLabel }}</div>
+<h1 style="font-size:30px;margin:0 0 10px;max-width:26ch">{{ cur.title }}</h1>
+<div style="display:flex;gap:6px">
+<span class="tag {{ cur.sevTag }}">{{ cur.severity }}</span>
+<span class="tag tag-neutral">{{ cur.status }}</span>
+<span class="tag tag-outline">detected {{ cur.age }}</span>
+</div>
+</div>
+<div style="display:flex;gap:8px;flex:none">
+<button class="btn btn-secondary" onClick="{{ investigate }}" style="font-size:13px">{{ investigateLabel }}</button>
+<button class="btn btn-primary" onClick="{{ resolve }}" style="font-size:13px">Mark resolved</button>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:0;border-bottom:2px solid var(--color-divider)">
+<section style="padding:22px 24px 26px 0">
+<h2 style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 10px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Detector summary</h2>
+<p style="margin:0;font-size:14px;max-width:76ch;text-wrap:pretty">{{ cur.summary }}</p>
+</section>
+<section style="padding:22px 0 26px 24px;border-left:1px solid var(--color-divider)">
+<sc-for list="{{ cur.facts }}" as="f" hint-placeholder-count="4">
+<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--color-divider);font-size:12px">
+<span style="color:color-mix(in srgb,var(--color-text) 55%,transparent);letter-spacing:0.04em;text-transform:uppercase">{{ f.k }}</span>
+<span style="font-variant-numeric:tabular-nums;text-align:right">{{ f.v }}</span>
+</div>
+</sc-for>
+</section>
+</div>
+
+<sc-if value="{{ agentRunning }}">
+<section style="padding:22px 0;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<span style="width:13px;height:13px;border:2px solid var(--color-accent);border-right-color:transparent;border-radius:50%;animation:tw-spin .8s linear infinite"></span>
+<h2 style="font-size:17px;margin:0">Agent investigating</h2>
+<span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">tool-use loop · read-only database tools · cap 12 calls</span>
+</div>
+<sc-for list="{{ liveSteps }}" as="s" hint-placeholder-count="2">
+<div style="display:grid;grid-template-columns:34px 1fr;gap:14px;padding:9px 0;border-top:1px solid var(--color-divider)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:12px;color:var(--color-accent);font-variant-numeric:tabular-nums">{{ s.n }}</span>
+<div>
+<div style="font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent);margin-bottom:2px">{{ s.tool }}</div>
+<div style="font-size:13.5px;max-width:84ch;text-wrap:pretty">{{ s.finding }}</div>
+</div>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{ hasReport }}">
+<div>
+<section style="padding:24px 0 26px;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:12px">
+<h2 style="font-size:17px;margin:0">Root cause</h2>
+<span style="font-size:11px;letter-spacing:0.04em;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ report.meta }}</span>
+</div>
+<p style="margin:0 0 12px;font-family:var(--font-heading);font-weight:800;font-size:23px;line-height:1.25;max-width:44ch;text-wrap:pretty">{{ report.headline }}</p>
+<p style="margin:0;font-size:14px;max-width:80ch;text-wrap:pretty;color:color-mix(in srgb,var(--color-text) 78%,transparent)">{{ report.detail }}</p>
+<div style="display:flex;gap:10px;margin-top:16px">
+<span class="tag tag-accent">confidence {{ report.confidence }}</span>
+<span class="tag tag-neutral">{{ report.affected }}</span>
+<span class="tag tag-neutral">{{ report.calls }}</span>
+</div>
+</section>
+
+<div style="display:grid;grid-template-columns:1.35fr 1fr;border-bottom:2px solid var(--color-divider)">
+<section style="padding:24px 24px 28px 0">
+<h2 style="font-size:17px;margin:0 0 14px">Investigation trail</h2>
+<sc-for list="{{ report.trail }}" as="s" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:34px 1fr;gap:14px;padding:10px 0;border-top:1px solid var(--color-divider)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:12px;color:var(--color-accent);font-variant-numeric:tabular-nums">{{ s.n }}</span>
+<div>
+<div style="font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent);margin-bottom:2px">{{ s.tool }}</div>
+<div style="font-size:13.5px;max-width:78ch;text-wrap:pretty">{{ s.finding }}</div>
+</div>
+</sc-for>
+</section>
+<section style="padding:24px 0 28px 24px;border-left:1px solid var(--color-divider)">
+<h2 style="font-size:17px;margin:0 0 14px">Recommended actions</h2>
+<sc-for list="{{ report.actions }}" as="a" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:16px 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--color-divider)">
+<span style="width:8px;height:8px;margin-top:6px;background:var(--color-accent)"></span>
+<div style="font-size:13.5px;text-wrap:pretty">{{ a.text }}</div>
+</div>
+</sc-for>
+</section>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ noReport }}">
+<div style="padding:34px 0;border-bottom:2px solid var(--color-divider);font-size:14px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">
+No report yet. Run the agent to trace this incident end to end.
+</div>
+</sc-if>
+
+<section style="padding:24px 0 0">
+<h2 style="font-size:17px;margin:0 0 12px">Related orders · {{ cur.relatedCount }}</h2>
+<table class="table">
+<thead><tr><th>Seq</th><th>External ID</th><th>Status</th><th>Currency</th><th>Amount</th><th>Attempts</th><th>Last error</th></tr></thead>
+<tbody>
+<sc-for list="{{ cur.related }}" as="o" hint-placeholder-count="6">
+<tr>
+<td style="font-variant-numeric:tabular-nums">#{{ o.seq }}</td>
+<td style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">{{ o.ext }}</td>
+<td><span class="tag {{ o.tag }}">{{ o.statusLabel }}</span></td>
+<td>{{ o.currency }}</td>
+<td style="font-variant-numeric:tabular-nums">{{ o.amount }}</td>
+<td style="font-variant-numeric:tabular-nums">{{ o.attempts }}</td>
+<td style="color:color-mix(in srgb,var(--color-text) 60%,transparent);font-size:12.5px">{{ o.lastError }}</td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+<div style="font-size:11.5px;padding-top:10px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ cur.relatedNote }}</div>
+</section>
+</div>
+</sc-if>
+
+<sc-if value="{{ isOrders }}">
+<div style="padding:28px 16px 48px">
+<h1 style="font-size:34px;margin:0 0 4px">Orders</h1>
+<p style="margin:0 0 20px;font-size:14px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">most recent 100 by sequence number · click a row for its event history</p>
+<div style="display:flex;gap:2px;margin-bottom:16px;border:1px solid var(--color-divider);width:fit-content;flex-wrap:wrap">
+<sc-for list="{{ orderFilters }}" as="f" hint-placeholder-count="6">
+<button onClick="{{ f.pick }}" style="border:0;cursor:pointer;padding:7px 13px;font-size:12px;letter-spacing:0.04em;font-family:var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+</sc-for>
+</div>
+<table class="table">
+<thead><tr><th>Seq</th><th>External ID</th><th>Status</th><th>Currency</th><th>Amount</th><th>Discovered</th><th>Synced</th><th>Attempts</th></tr></thead>
+<tbody>
+<sc-for list="{{ visibleOrders }}" as="o" hint-placeholder-count="12">
+<tr onClick="{{ o.toggle }}" style="cursor:pointer;background:{{ o.rowBg }}">
+<td style="font-variant-numeric:tabular-nums;border-left:3px solid {{ o.mark }}">#{{ o.seq }}</td>
+<td style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">{{ o.ext }}</td>
+<td><span class="tag {{ o.tag }}">{{ o.statusLabel }}</span></td>
+<td>{{ o.currency }}</td>
+<td style="font-variant-numeric:tabular-nums">{{ o.amount }}</td>
+<td style="font-variant-numeric:tabular-nums;font-size:12.5px">{{ o.discovered }}</td>
+<td style="font-variant-numeric:tabular-nums;font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ o.synced }}</td>
+<td style="font-variant-numeric:tabular-nums">{{ o.attempts }}</td>
+</tr>
+<sc-if value="{{ o.isOpen }}">
+<tr>
+<td colspan="8" style="background:color-mix(in srgb,var(--color-text) 5%,transparent);padding:16px 12px 18px">
+<div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent);margin-bottom:10px">Event history · order #{{ o.seq }}</div>
+<sc-for list="{{ o.events }}" as="e" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:160px 200px 1fr;gap:14px;padding:6px 0;border-top:1px solid var(--color-divider);font-size:12.5px">
+<span style="font-variant-numeric:tabular-nums;color:color-mix(in srgb,var(--color-text) 55%,transparent);font-family:ui-monospace,Menlo,monospace">{{ e.at }}</span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:11.5px;letter-spacing:0.04em">{{ e.type }}</span>
+<span style="text-wrap:pretty">{{ e.message }}</span>
+</div>
+</sc-for>
+</td>
+</tr>
+</sc-if>
+</sc-for>
+</tbody>
+</table>
+<div style="font-size:11.5px;padding-top:12px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ ordersNote }}</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;\&quot;light\&quot; | \&quot;dark\&quot;&quot;,&quot;section&quot;:&quot;Appearance&quot;},&quot;showSequenceLane&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Overview&quot;}}">
+const SEV = { LOW: "var(--color-neutral-500)", MEDIUM: "var(--color-accent-400)", HIGH: "var(--color-accent-500)", CRITICAL: "var(--color-accent)" };
+const OSTATUS = {
+  SYNCED: "tag-neutral", DISCOVERED: "tag-neutral", SYNCING: "tag-accent-2",
+  AWAITING_SETTLEMENT: "tag-outline", SETTLED: "tag-neutral", FAILED: "tag-accent", CANCELLED: "tag-neutral"
+};
+const DAY = 864e5, MIN = 6e4;
+
+function pad(n) { return String(n).padStart(2, "0"); }
+function fmt(d) { return d ? `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}` : "—"; }
+function ago(ms) {
+  const m = Math.round(ms / MIN);
+  if (m < 60) return m + "m ago";
+  const h = m / 60;
+  if (h < 48) return h.toFixed(0) + "h ago";
+  return (h / 24).toFixed(0) + "d ago";
+}
+
+const NOW = Date.now();
+const STUCK_AT = NOW - (3 * DAY + 4 * 3600e3);
+
+function buildOrders() {
+  const out = [];
+  for (let seq = 1; seq <= 351; seq++) {
+    const stuck = seq === 301, queued = seq > 301;
+    const discovered = NOW - (20 * DAY) + (seq / 351) * (20 * DAY);
+    out.push({
+      seq,
+      ext: "ord_" + (4820000 + seq * 37).toString(36).toUpperCase(),
+      status: stuck ? "AWAITING_SETTLEMENT" : queued ? "DISCOVERED" : "SYNCED",
+      currency: stuck ? "MXN" : "USD",
+      cents: stuck ? 428900 : 1200 + ((seq * 7919) % 48000),
+      discoveredAt: stuck ? STUCK_AT - 12 * MIN : discovered,
+      syncedAt: stuck || queued ? null : discovered + (4 + (seq % 9)) * MIN,
+      attempts: stuck ? 47 : queued ? 0 : 1,
+      lastError: stuck ? "settlement not confirmed (no terminal state returned)" : null
+    });
+  }
+  return out;
+}
+const ORDERS = buildOrders();
+
+function eventsFor(o) {
+  const t = o.discoveredAt, mk = (off, type, message) => ({ at: fmt(new Date(Math.min(t + off, NOW))), type, message });
+  if (o.status === "AWAITING_SETTLEMENT") return [
+    mk(0, "DISCOVERED", "pulled from sourcing API · currency MXN · 4,289.00"),
+    mk(2 * MIN, "SYNC_ATTEMPT", "posting order to fulfilment"),
+    mk(3 * MIN, "SYNC_SUCCESS", "accepted · awaiting settlement confirmation"),
+    mk(12 * MIN, "SETTLEMENT_CHECK", "provider returned settlement_status: pending"),
+    mk(6 * 3600e3, "SETTLEMENT_CHECK", "still pending · attempt 12 of an open-ended poll"),
+    mk(2 * DAY, "SETTLEMENT_CHECK", "still pending · attempt 41 · no error, no backoff"),
+    mk(3 * DAY, "BLOCKED_WAITING", "cursor cannot advance past sequence 300")
+  ];
+  if (o.status === "DISCOVERED") {
+    const span = Math.max(NOW - o.discoveredAt, 4 * MIN);
+    return [
+      mk(0, "DISCOVERED", "pulled from sourcing API · queued at position " + (o.seq - 301)),
+      mk(Math.min(30 * MIN, span * 0.35), "BLOCKED_WAITING", "waiting on order #301 to reach a terminal state"),
+      mk(span * 0.9, "BLOCKED_WAITING", "still waiting · zero sync attempts made")
+    ];
+  }
+  return [
+    mk(0, "DISCOVERED", "pulled from sourcing API"),
+    mk(2 * MIN, "SYNC_ATTEMPT", "posting order to fulfilment"),
+    mk(3 * MIN, "SYNC_SUCCESS", "accepted"),
+    mk(5 * MIN, "SETTLEMENT_CHECK", "provider returned settlement_status: settled"),
+    mk(6 * MIN, "SETTLEMENT_CONFIRMED", "terminal state reached · cursor advanced")
+  ];
+}
+
+const STUCK_TRAIL = [
+  { tool: "get_order_sync_history", finding: "Order #301 has 47 SETTLEMENT_CHECK events over 3d 04h. Every one returns settlement_status: pending. No error, no retry backoff, no failure." },
+  { tool: "search_sync_events", finding: "Sampled 40 healthy neighbours (#261–#300): all confirmed settlement between 4 and 11 minutes after the first check. #301 is three orders of magnitude outside that distribution." },
+  { tool: "query_orders", finding: "Compared #301's fields against the healthy set. 300 of 300 healthy orders are USD. #301 is the only MXN order in the dataset — and the only order not in a terminal state." },
+  { tool: "get_order", finding: "The provider's settlement response for #301 carries no terminal status for this currency. The poll will never resolve on its own; nothing in the pipeline times it out." },
+  { tool: "get_pipeline_cursor", finding: "last_processed_sequence_number = 300, unchanged since the first stalled check. The pipeline advances strictly in sequence and holds on a non-terminal record." },
+  { tool: "query_orders", finding: "Orders #302–#351 are all DISCOVERED with attempt_count = 0. They are not failing independently — they are queued behind the cursor. The 50-order backlog is a symptom, not a second fault." }
+];
+
+const INCIDENTS = [
+  {
+    id: 4, ref: "INC-0004", type: "BLOCKED_BACKLOG", severity: "CRITICAL", status: "OPEN",
+    title: "50 orders queued behind a non-terminal record",
+    summary: "Orders #302–#351 were discovered normally over the last 3 days but none has been attempted. The pipeline cursor has not advanced past sequence 300 since order #301 entered AWAITING_SETTLEMENT.",
+    detectedAt: STUCK_AT + 6 * 3600e3, relatedSeqs: [301, 302, 303, 304, 305, 306], reportKey: "backlog",
+    facts: [["Backlog size", "50 orders"], ["Cursor", "#300"], ["Held for", "3d 04h"], ["Attempts on backlog", "0"], ["Detector", "detectBlockedBacklog"]]
+  },
+  {
+    id: 3, ref: "INC-0003", type: "STUCK_ORDER", severity: "HIGH", status: "OPEN",
+    title: "Order #301 stuck in AWAITING_SETTLEMENT for 3d 04h",
+    summary: "Order #301 reached AWAITING_SETTLEMENT and has never confirmed. 47 settlement checks have returned a non-terminal status with no error raised. Threshold for this detector is 2h.",
+    detectedAt: STUCK_AT + 2 * 3600e3, relatedSeqs: [301], reportKey: "stuck",
+    facts: [["Order", "#301"], ["Stuck for", "3d 04h"], ["Settlement checks", "47"], ["Currency", "MXN"], ["Detector", "detectStuckOrders"]]
+  },
+  {
+    id: 2, ref: "INC-0002", type: "SYNC_FAILURE_SPIKE", severity: "MEDIUM", status: "OPEN",
+    title: "9 sync failures in a 40-minute window",
+    summary: "A burst of SYNC_FAILURE events on orders #248–#256, all with a 502 from the fulfilment endpoint. Failure rate returned to zero without intervention.",
+    detectedAt: NOW - 9 * DAY, relatedSeqs: [248, 249, 250, 251, 252], reportKey: null,
+    facts: [["Failures", "9"], ["Window", "40m"], ["Orders", "#248–#256"], ["Current rate", "0/h"], ["Detector", "detectSyncFailureSpike"]]
+  },
+  {
+    id: 1, ref: "INC-0001", type: "DATA_FLOW_GAP", severity: "LOW", status: "RESOLVED",
+    title: "No new orders discovered for 5h 12m",
+    summary: "Discovery went quiet overnight and resumed on its own. Auto-resolved once new records began arriving.",
+    detectedAt: NOW - 14 * DAY, relatedSeqs: [], reportKey: null,
+    facts: [["Gap", "5h 12m"], ["Resolved", "auto"], ["Detector", "detectDataFlowGaps"]]
+  }
+];
+
+const REPORTS = {
+  stuck: {
+    headline: "Order #301 is the only non-USD order in the pipeline, and the settlement provider never returns a terminal state for MXN.",
+    detail: "It has held AWAITING_SETTLEMENT for 3d 04h across 47 polls that each came back pending. Because the pipeline advances its cursor strictly in sequence and only past a terminal state, #301 holds the cursor at #300 indefinitely. Nothing throws, so no error-rate alert fires.",
+    confidence: "HIGH", affected: "1 order directly · 50 blocked", calls: "6 tool calls",
+    meta: "claude-sonnet-4-5 · generated 2h ago",
+    trail: STUCK_TRAIL,
+    actions: [
+      "Settle or cancel order #301 by hand to release the cursor past sequence 300 — this clears the 50-order backlog immediately.",
+      "Add a settlement timeout (6h suggested) that moves an order to FAILED instead of holding the cursor open-ended.",
+      "Gate non-USD orders at discovery until settlement support is confirmed for the currency.",
+      "Make cursor advancement tolerant of a single non-terminal record, or process in parallel lanes so one order cannot stall the queue."
+    ]
+  },
+  backlog: {
+    headline: "The backlog is downstream of order #301, not a fault of its own.",
+    detail: "Every one of #302–#351 was discovered on schedule and has attempt_count = 0. None has been offered to the fulfilment endpoint. The cursor is the constraint: it holds at #300 because #301 never reached a terminal state, and the queue behind it grows at the normal discovery rate.",
+    confidence: "HIGH", affected: "50 orders", calls: "5 tool calls",
+    meta: "claude-sonnet-4-5 · generated 1h ago",
+    trail: [
+      { tool: "query_orders", finding: "All 50 orders #302–#351 sit in DISCOVERED with attempt_count = 0 and no SYNC_ATTEMPT events. They were never tried, so they are not failing." },
+      { tool: "get_pipeline_cursor", finding: "Cursor is at sequence 300 and has not moved in 3d 04h. Discovery is unaffected — new records keep arriving." },
+      { tool: "get_order", finding: "Sequence 301 is AWAITING_SETTLEMENT, the first non-terminal record above the cursor." },
+      { tool: "search_sync_events", finding: "Backlog growth rate (≈16/day) matches the historical discovery rate, so intake is healthy — only advancement has stopped." },
+      { tool: "get_order_sync_history", finding: "Cross-referenced INC-0003: the same root cause. Recommend treating this incident as a symptom and tracking the fix on #301." }
+    ],
+    actions: [
+      "Resolve INC-0003 first; this incident should auto-clear once the cursor advances.",
+      "Backfill in one pass after the cursor moves — the 50 orders are valid and unmodified.",
+      "Alert on cursor age, not backlog size: the backlog is a lagging indicator of the same condition."
+    ]
+  }
+};
+
+const SPIKE_TRAIL = [
+  { tool: "search_sync_events", finding: "Pulled all SYNC_FAILURE events in the window: 9 failures across orders #248–#256, each a 502 from the fulfilment endpoint." },
+  { tool: "get_order_sync_history", finding: "Every affected order retried and succeeded within 12 minutes. No order was left in FAILED." },
+  { tool: "query_orders", finding: "No shared currency, customer or amount pattern across the nine — the grouping is purely temporal." },
+  { tool: "search_sync_events", finding: "Failure count in the following 4 hours: 0. The condition cleared without intervention, consistent with a transient upstream outage." }
+];
+const SPIKE_REPORT = {
+  headline: "A transient 502 from the fulfilment endpoint, already recovered.",
+  detail: "Nine orders failed inside a 40-minute window and all nine succeeded on retry. There is no pattern in the affected records beyond timing, and the failure rate has been zero since. No action is required on the data.",
+  confidence: "MEDIUM", affected: "9 orders · 0 unresolved", calls: "4 tool calls",
+  meta: "claude-sonnet-4-5 · generated just now",
+  trail: SPIKE_TRAIL,
+  actions: [
+    "No data repair needed — all nine orders reached SYNCED on retry.",
+    "Raise the failure-spike threshold or add a recovery grace period so self-healing bursts do not page anyone.",
+    "Record the outage window against the provider's status page for the month's reliability numbers."
+  ]
+};
+
+class Component extends DCLogic {
+  state = {
+    screen: "overview", incidentId: 3, theme: null,
+    incStatus: "ALL", ordStatus: "ALL", expanded: null,
+    scanning: false, lastScan: 4, running: false, liveN: 0, openRows: {},
+    reports: {}, resolved: {}
+  };
+
+  componentDidMount() {
+    this.tick = setInterval(() => this.setState(s => ({ lastScan: s.lastScan + 1 })), 1000);
+  }
+  componentWillUnmount() { clearInterval(this.tick); clearTimeout(this.agent); }
+
+  go(screen, incidentId) { this.setState({ screen, ...(incidentId ? { incidentId } : {}), expanded: null }); window.scrollTo(0, 0); }
+
+  scan = () => {
+    this.setState({ scanning: true });
+    setTimeout(() => this.setState({ scanning: false, lastScan: 0 }), 900);
+  };
+
+  investigate = () => {
+    const inc = this.incident();
+    this.setState({ running: true, liveN: 0 });
+    const trail = this.trailFor(inc);
+    const step = () => {
+      this.agent = setTimeout(() => {
+        const n = this.state.liveN + 1;
+        if (n >= trail.length) {
+          this.setState(s => ({ running: false, liveN: n, reports: { ...s.reports, [inc.id]: true } }));
+        } else { this.setState({ liveN: n }); step(); }
+      }, 850);
+    };
+    step();
+  };
+
+  resolve = () => {
+    const inc = this.incident();
+    this.setState(s => ({ resolved: { ...s.resolved, [inc.id]: true } }));
+  };
+
+  incident() { return INCIDENTS.find(i => i.id === this.state.incidentId) || INCIDENTS[0]; }
+  trailFor(inc) { return inc.reportKey ? REPORTS[inc.reportKey].trail : SPIKE_TRAIL; }
+  reportFor(inc) {
+    if (inc.reportKey) return REPORTS[inc.reportKey];
+    return this.state.reports[inc.id] ? SPIKE_REPORT : null;
+  }
+  statusOf(inc) {
+    if (this.state.resolved[inc.id]) return "RESOLVED";
+    if (this.state.running && inc.id === this.state.incidentId) return "INVESTIGATING";
+    return inc.status;
+  }
+
+  incView(inc) {
+    const st = this.statusOf(inc);
+    return {
+      ref: inc.ref, title: inc.title, summary: inc.summary, severity: inc.severity, status: st,
+      typeLabel: inc.type.replace(/_/g, " ").toLowerCase(),
+      age: ago(NOW - inc.detectedAt),
+      delay: "0s",
+      reportLabel: this.reportFor(inc) ? "report ready" : "investigation pending",
+      detector: inc.facts[inc.facts.length - 1][1],
+      isOpen: !!this.state.openRows[inc.id],
+      chevron: this.state.openRows[inc.id] ? "rotate(45deg)" : "none",
+      toggle: () => this.setState(s => ({ openRows: { ...s.openRows, [inc.id]: !s.openRows[inc.id] } })),
+      sevColor: SEV[inc.severity], sevTag: inc.severity === "LOW" ? "tag-neutral" : "tag-accent",
+      open: () => this.go("incident", inc.id)
+    };
+  }
+
+  orderView(o) {
+    const open = this.state.expanded === o.seq;
+    return {
+      seq: o.seq, ext: o.ext, currency: o.currency,
+      statusLabel: o.status.replace(/_/g, " ").toLowerCase(),
+      tag: OSTATUS[o.status], amount: (o.cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2 }),
+      attempts: o.attempts, lastError: o.lastError || "—",
+      discovered: fmt(new Date(o.discoveredAt)), synced: o.syncedAt ? fmt(new Date(o.syncedAt)) : "—",
+      mark: o.seq === 301 ? "var(--color-accent)" : o.seq > 301 ? "var(--color-neutral-400)" : "transparent",
+      rowBg: open ? "color-mix(in srgb,var(--color-text) 5%,transparent)" : "transparent",
+      isOpen: open, events: open ? eventsFor(o) : [],
+      toggle: () => this.setState(s => ({ expanded: s.expanded === o.seq ? null : o.seq }))
+    };
+  }
+
+  segs(list, active, key) {
+    return list.map(label => ({
+      label, pick: () => this.setState({ [key]: label, expanded: null }),
+      bg: label === active ? "var(--color-accent)" : "transparent",
+      fg: label === active ? "var(--color-bg)" : "var(--color-text)"
+    }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const theme = s.theme ?? (this.props.theme ?? "dark");
+    const openList = INCIDENTS.filter(i => this.statusOf(i) === "OPEN" || this.statusOf(i) === "INVESTIGATING");
+    const allOpen = openList.length > 0 && openList.every(i => s.openRows[i.id]);
+    const screen = s.screen;
+    const inc = this.incident();
+    const report = this.reportFor(inc);
+    const trail = this.trailFor(inc);
+
+    const nav = [["Overview", "overview"], ["Incidents", "incidents"], ["Orders", "orders"]];
+    const navItems = nav.map(([label, key]) => ({
+      label, go: () => this.go(key),
+      bg: screen === key || (key === "incidents" && screen === "incident") ? "var(--color-accent)" : "transparent",
+      fg: screen === key || (key === "incidents" && screen === "incident") ? "var(--color-bg)" : "var(--color-text)"
+    }));
+
+    const chartCounts = [16, 14, 17, 15, 18, 13, 16, 15, 17, 14, 16, 6, 0, 0];
+    const chart = chartCounts.map((c, i) => {
+      const d = new Date(NOW - (13 - i) * DAY);
+      return {
+        h: Math.max((c / 18) * 100, 1.5), c: c === 0 ? "var(--color-accent)" : "var(--color-neutral-800)",
+        delay: (0.18 + i * 0.035).toFixed(3) + "s",
+        title: `${fmt(d).slice(0, 10)}: ${c} synced`
+      };
+    });
+
+    const lane = [];
+    for (let seq = 292; seq <= 351; seq++) {
+      const stuck = seq === 301, queued = seq > 301;
+      lane.push({
+        delay: (0.15 + (seq - 292) * 0.012).toFixed(3) + "s",
+        h: stuck ? 100 : queued ? 42 : 68,
+        c: stuck ? "var(--color-accent)" : queued ? "var(--color-neutral-400)" : "var(--color-neutral-800)",
+        mark: seq === 301 ? "2px solid var(--color-text)" : "0",
+        title: `#${seq} · ${stuck ? "AWAITING_SETTLEMENT (MXN)" : queued ? "DISCOVERED — queued" : "SYNCED"}`
+      });
+    }
+
+    const statusBars = [
+      { label: "Synced", count: 300, c: "var(--color-neutral-800)" },
+      { label: "Discovered", count: 50, c: "var(--color-neutral-400)" },
+      { label: "Awaiting settlement", count: 1, c: "var(--color-accent)" },
+      { label: "Failed", count: 0, c: "var(--color-accent-400)" }
+    ].map((b, i) => ({ ...b, delay: (0.2 + i * 0.09).toFixed(2) + "s", w: Math.max((b.count / 300) * 100, b.count ? 1 : 0) }));
+
+    const stats = [
+      { label: "Total orders", value: "351", hint: "20 days of discovery", color: "var(--color-text)" },
+      { label: "Blocked backlog", value: "50", hint: "discovered, never attempted", color: "var(--color-accent)" },
+      { label: "Oldest stuck order", value: "#301", hint: "stuck " + ago(NOW - STUCK_AT), color: "var(--color-accent)" },
+      { label: "Cursor position", value: "#300", hint: "orders-sync-cursor · held 3d 04h", color: "var(--color-accent)" },
+      { label: "Sync failures (1h)", value: "0", hint: "nothing is erroring", color: "var(--color-text)" },
+      { label: "Last order discovered", value: "26m ago", hint: "intake is healthy", color: "var(--color-text)" }
+    ].map((t, i) => ({ ...t, delay: (0.05 + i * 0.06).toFixed(2) + "s", rowRule: i > 2 ? "1px solid var(--color-divider)" : "0" }));
+
+    const visible = ORDERS.slice().reverse().slice(0, 100)
+      .filter(o => s.ordStatus === "ALL" || o.status === s.ordStatus.replace(/ /g, "_").toUpperCase());
+
+    const incs = INCIDENTS.filter(i => s.incStatus === "ALL" || this.statusOf(i) === s.incStatus);
+
+    const curStatus = this.statusOf(inc);
+
+    return {
+      theme, themeGlyph: theme === "dark" ? "☀" : "☾",
+      toggleTheme: () => this.setState({ theme: theme === "dark" ? "light" : "dark" }),
+      navItems, scan: this.scan, scanLabel: s.scanning ? "Scanning…" : "Scan now",
+      lastScanLabel: s.lastScan + "s ago",
+      isOverview: screen === "overview", isIncidents: screen === "incidents",
+      isDetail: screen === "incident", isOrders: screen === "orders",
+      showStrip: this.props.showSequenceLane ?? true,
+      goIncidents: () => this.go("incidents"),
+      stats, chart, chartFrom: fmt(new Date(NOW - 13 * DAY)).slice(0, 10), chartTo: fmt(new Date(NOW)).slice(0, 10),
+      lane, statusBars,
+      openIncidents: openList.map((i, n) => ({ ...this.incView(i), delay: (0.08 + n * 0.09).toFixed(2) + "s" })),
+      openCount: String(openList.length).padStart(2, "0"),
+      expandAllLabel: allOpen ? "Collapse all" : "Expand all",
+      toggleAll: () => this.setState(() => {
+        const next = {};
+        if (!allOpen) openList.forEach(i => { next[i.id] = true; });
+        return { openRows: next };
+      }),
+      filteredIncidents: incs.map((i, n) => ({ ...this.incView(i), delay: (0.08 + n * 0.07).toFixed(2) + "s" })),
+      statusFilters: this.segs(["ALL", "OPEN", "INVESTIGATING", "RESOLVED", "IGNORED"], s.incStatus, "incStatus"),
+      orderFilters: this.segs(["ALL", "SYNCED", "DISCOVERED", "AWAITING SETTLEMENT", "FAILED", "CANCELLED"], s.ordStatus, "ordStatus"),
+      visibleOrders: visible.map(o => this.orderView(o)),
+      ordersNote: `showing ${visible.length} of 351 orders · sequence 351 → 252`,
+      cur: {
+        ...this.incView(inc),
+        facts: inc.facts.map(([k, v]) => ({ k, v })),
+        related: ORDERS.filter(o => inc.relatedSeqs.includes(o.seq)).map(o => this.orderView(o)),
+        relatedCount: inc.relatedSeqs.length,
+        relatedNote: inc.type === "BLOCKED_BACKLOG" ? "showing the head of the queue · 50 orders share this state" : "the agent compared these against 40 healthy neighbours"
+      },
+      investigate: this.investigate, resolve: this.resolve,
+      investigateLabel: s.running ? "Investigating…" : report ? "Re-investigate" : "Investigate",
+      agentRunning: s.running,
+      liveSteps: trail.slice(0, s.liveN).map((t, i) => ({ n: pad(i + 1), tool: t.tool, finding: t.finding })),
+      hasReport: !!report && !s.running,
+      noReport: !report && !s.running,
+      report: report ? {
+        ...report,
+        trail: report.trail.map((t, i) => ({ n: pad(i + 1), tool: t.tool, finding: t.finding })),
+        actions: report.actions.map(text => ({ text }))
+      } : { trail: [], actions: [] },
+      curStatus
+    };
+  }
+}
+</script>
+</body>
+</html>

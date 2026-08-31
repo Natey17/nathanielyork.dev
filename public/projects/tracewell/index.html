@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-838972df-717d-4603-b195-2653d4570b84/styles.css">
+<script src="_ds/modernist-838972df-717d-4603-b195-2653d4570b84/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:var(--color-bg)}
+a{color:var(--color-accent-700);text-decoration:none}
+a:hover{color:var(--color-accent)}
+@keyframes tl-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes tl-open{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+[data-theme="dark"]{--color-bg:#181716;--color-surface:#232120;--color-text:#f5f3f2;--color-divider:color-mix(in srgb,#f5f3f2 34%,transparent);--color-neutral-100:#2d2b2b;--color-neutral-200:#363333;--color-neutral-800:#d7d3d3;--color-neutral-900:#f8f4f4;--color-accent-100:#3a1a12;--color-accent-700:#ff9783;--color-accent-800:#ffc4b8}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);font-size:16px">
+
+<header style="display:flex;align-items:center;gap:22px;padding:20px 56px;border-bottom:2px solid var(--color-divider);position:sticky;top:0;z-index:5;background:var(--color-bg)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:17px;margin-right:auto">TRACEWELL<span style="color:var(--color-accent)">.</span></div>
+<a href="https://github.com/Natey17/Tracewell" style="font-size:13px;color:var(--color-text)">Repository</a>
+<a href="https://github.com/Natey17/Tracewell#readme" style="font-size:13px;color:var(--color-text)">Docs</a>
+<button class="btn btn-secondary btn-icon" onClick="{{ toggleTheme }}" title="Toggle theme" style="width:32px;height:32px;font-size:13px">{{ themeGlyph }}</button>
+<a href="Tracewell%20Dashboard.dc.html" class="btn btn-primary" style="font-size:13px">Open the dashboard →</a>
+</header>
+
+<section style="padding:96px 56px 72px;border-bottom:2px solid var(--color-divider);animation:tl-rise .55s cubic-bezier(.2,.7,.3,1) both">
+<div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-accent);margin-bottom:26px">Pipeline observability · agentic root-cause analysis</div>
+<h1 style="font-size:74px;line-height:0.98;margin:0 0 32px;max-width:20ch">Finds the failure your monitors <span style="color:var(--color-accent)">can't see</span>.</h1>
+<p style="font-size:20px;line-height:1.5;max-width:52ch;margin:0 0 40px;color:color-mix(in srgb,var(--color-text) 78%,transparent);text-wrap:pretty">One stuck record can stall a whole pipeline without erroring. Tracewell catches it, traces the cause, and writes up what it found.</p>
+<div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:44px">
+<a href="Tracewell%20Dashboard.dc.html" class="btn btn-primary" style="font-size:14px;padding:13px 22px">Open the dashboard →</a>
+<a href="https://github.com/Natey17/Tracewell" class="btn btn-secondary" style="font-size:14px;padding:13px 22px">View the repository</a>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<span class="tag tag-outline">TypeScript</span>
+<span class="tag tag-outline">Express</span>
+<span class="tag tag-outline">Prisma · Postgres</span>
+<span class="tag tag-outline">React</span>
+<span class="tag tag-outline">Claude tool-use</span>
+<span class="tag tag-outline">Docker Compose</span>
+</div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:2px solid var(--color-divider)">
+<div style="padding:34px 40px;border-left:1px solid var(--color-divider)">
+<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:14px">Detectors</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:38px;line-height:1">4</div>
+<div style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">stuck record, blocked backlog, failure spike, data-flow gap</div>
+</div>
+<div style="padding:34px 40px;border-left:1px solid var(--color-divider)">
+<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:14px">Scan interval</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:38px;line-height:1">30s</div>
+<div style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">plain SQL cron job — the paid agent only runs on a flag</div>
+</div>
+<div style="padding:34px 40px;border-left:1px solid var(--color-divider)">
+<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:14px">Agent tools</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:38px;line-height:1">read-only</div>
+<div style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">fixed database tools, 12 calls per investigation</div>
+</div>
+<div style="padding:34px 40px;border-left:1px solid var(--color-divider)">
+<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:14px">Output</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:38px;line-height:1">schema</div>
+<div style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">strict tool schema — a malformed response can't reach the database</div>
+</div>
+</section>
+
+<section style="display:grid;grid-template-columns:0.9fr 1.4fr;border-bottom:2px solid var(--color-divider)">
+<div style="padding:72px 48px 76px 56px">
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0;color:color-mix(in srgb,var(--color-text) 55%,transparent)">The problem</h2>
+</div>
+<div style="padding:72px 56px 76px 48px;border-left:1px solid var(--color-divider)">
+<p style="font-size:26px;line-height:1.35;font-family:var(--font-heading);font-weight:800;margin:0 0 24px;max-width:34ch;text-wrap:pretty">Nothing crashes. Nothing alerts. The pipeline just quietly stops making progress.</p>
+<p style="font-size:16px;line-height:1.65;max-width:62ch;margin:0;color:color-mix(in srgb,var(--color-text) 78%,transparent);text-wrap:pretty">These pipelines advance in strict sequence, only once each order reaches a terminal state. One stuck order backs up the whole queue — and error-rate monitors never see it, because nothing throws. Finding the culprit means tracing timestamps across days of logs by hand.</p>
+</div>
+</section>
+
+<section style="padding:76px 56px 40px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:34px">
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0;color:color-mix(in srgb,var(--color-text) 55%,transparent)">What it does · four steps</h2>
+<span style="font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 42%,transparent)">{{ stepHint }}</span>
+</div>
+<div style="display:grid;grid-template-columns:3px 1fr;gap:0">
+<div style="background:color-mix(in srgb,var(--color-text) 12%,transparent);position:relative">
+<span style="position:absolute;left:0;top:0;width:3px;height:{{ railPct }}%;background:var(--color-accent);transition:height .45s cubic-bezier(.2,.7,.3,1)"></span>
+</div>
+<div>
+
+<div onClick="{{ pick1 }}" style="cursor:pointer;border-top:2px solid var(--color-divider);padding:22px 0 22px 28px;display:grid;grid-template-columns:44px 1fr auto;gap:18px;align-items:baseline;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:13px;color:{{ n1 }}">01</span>
+<h3 style="font-size:22px;margin:0">Scans continuously</h3>
+<span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">every 30s</span>
+</div>
+<sc-if value="{{ step1 }}">
+<div style="padding:0 0 30px 90px;animation:tl-open .4s cubic-bezier(.2,.7,.3,1) both">
+<p style="font-size:15px;line-height:1.65;margin:0;max-width:62ch;color:color-mix(in srgb,var(--color-text) 75%,transparent);text-wrap:pretty">Four classes of anomaly: a record stuck in a non-terminal state, a backlog piling up behind it, a burst of sync failures, and a gap in new records arriving at all. Findings are deduped so they don't re-fire, and auto-resolve when the condition clears.</p>
+</div>
+</sc-if>
+
+<div onClick="{{ pick2 }}" style="cursor:pointer;border-top:2px solid var(--color-divider);padding:22px 0 22px 28px;display:grid;grid-template-columns:44px 1fr auto;gap:18px;align-items:baseline;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:13px;color:{{ n2 }}">02</span>
+<h3 style="font-size:22px;margin:0">Investigates on its own</h3>
+<span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">agent loop</span>
+</div>
+<sc-if value="{{ step2 }}">
+<div style="padding:0 0 30px 90px;animation:tl-open .4s cubic-bezier(.2,.7,.3,1) both">
+<p style="font-size:15px;line-height:1.65;margin:0;max-width:62ch;color:color-mix(in srgb,var(--color-text) 75%,transparent);text-wrap:pretty">A Claude agent with a fixed set of read-only database tools pulls the record's history, compares it against healthy neighbours, and follows whatever the evidence points to. No human writes the query that finds the answer.</p>
+</div>
+</sc-if>
+
+<div onClick="{{ pick3 }}" style="cursor:pointer;border-top:2px solid var(--color-divider);padding:22px 0 22px 28px;display:grid;grid-template-columns:44px 1fr auto;gap:18px;align-items:baseline;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:13px;color:{{ n3 }}">03</span>
+<h3 style="font-size:22px;margin:0">Writes a structured report</h3>
+<span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">strict schema</span>
+</div>
+<sc-if value="{{ step3 }}">
+<div style="padding:0 0 30px 90px;animation:tl-open .4s cubic-bezier(.2,.7,.3,1) both">
+<p style="font-size:15px;line-height:1.65;margin:0;max-width:62ch;color:color-mix(in srgb,var(--color-text) 75%,transparent);text-wrap:pretty">Root cause, confidence, affected records, a step-by-step evidence trail and recommended actions. Not a chat transcript — a schema-enforced result you can render, store, or pipe into a ticket.</p>
+</div>
+</sc-if>
+
+<div onClick="{{ pick4 }}" style="cursor:pointer;border-top:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider);padding:22px 0 22px 28px;display:grid;grid-template-columns:44px 1fr auto;gap:18px;align-items:baseline;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:13px;color:{{ n4 }}">04</span>
+<h3 style="font-size:22px;margin:0">Shows it on a dashboard</h3>
+<span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">live</span>
+</div>
+<sc-if value="{{ step4 }}">
+<div style="padding:22px 0 4px 90px;animation:tl-open .4s cubic-bezier(.2,.7,.3,1) both">
+<p style="font-size:15px;line-height:1.65;margin:0 0 18px;max-width:62ch;color:color-mix(in srgb,var(--color-text) 75%,transparent);text-wrap:pretty">Pipeline health at a glance, the incident list with severity and status, each report in full, and the raw record table with every row expandable to its event history.</p>
+<a href="Tracewell%20Dashboard.dc.html" class="btn btn-secondary" style="font-size:12.5px">Open the dashboard →</a>
+</div>
+</sc-if>
+
+</div>
+</div>
+</section>
+
+<section style="padding:0 56px 80px">
+<div style="border-top:2px solid var(--color-divider);padding-top:40px">
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 34px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">How it works</h2>
+<div style="display:flex;align-items:stretch;flex-wrap:wrap;gap:0">
+<div style="flex:1;min-width:150px;padding:22px 20px 26px 0">
+<div style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent);margin-bottom:10px">Source</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;margin-bottom:8px">Third-party API</div>
+<div style="font-size:12.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 65%,transparent)">orders land in Postgres with a full sync-event history</div>
+</div>
+<div style="flex:1;min-width:150px;padding:22px 20px 26px;border-left:1px solid var(--color-divider)">
+<div style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent);margin-bottom:10px">Every 30s</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;margin-bottom:8px">Scanner</div>
+<div style="font-size:12.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 65%,transparent)">four SQL detectors; each finding becomes an incident row</div>
+</div>
+<div style="flex:1;min-width:150px;padding:22px 20px 26px;border-left:1px solid var(--color-divider);background:color-mix(in srgb,var(--color-accent) 8%,transparent)">
+<div style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent);margin-bottom:10px">On a flag</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;margin-bottom:8px">Agent loop</div>
+<div style="font-size:12.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 72%,transparent)">iterative read-only tool calls against the same database</div>
+</div>
+<div style="flex:1;min-width:150px;padding:22px 20px 26px;border-left:1px solid var(--color-divider)">
+<div style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent);margin-bottom:10px">Strict schema</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;margin-bottom:8px">Report</div>
+<div style="font-size:12.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 65%,transparent)">submit_incident_report validates exactly or is rejected</div>
+</div>
+<div style="flex:1;min-width:150px;padding:22px 0 26px 20px;border-left:1px solid var(--color-divider)">
+<div style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent);margin-bottom:10px">Read it</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;margin-bottom:8px">Dashboard</div>
+<div style="font-size:12.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 65%,transparent)">health, incidents, reports and the raw event timeline</div>
+</div>
+</div>
+</div>
+</section>
+
+<section style="background:#201e1d;color:#f8f4f4;padding:80px 56px 88px">
+<div style="display:grid;grid-template-columns:0.85fr 1.4fr;gap:56px;align-items:start">
+<div>
+<div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-400);margin-bottom:22px">The test case</div>
+<p style="font-size:28px;line-height:1.25;font-family:var(--font-heading);font-weight:800;margin:0 0 20px;text-wrap:pretty">One order in the wrong currency, 50 orders stuck behind it, and nothing labelled as the cause.</p>
+<p style="font-size:14.5px;line-height:1.65;margin:0;color:color-mix(in srgb,#f8f4f4 72%,transparent);text-wrap:pretty">The seed script builds a deterministic scenario: 300 healthy orders, order #301 priced in MXN that reaches AWAITING_SETTLEMENT and never confirms, and orders #302–#351 discovered normally but never synced. Nothing in the data points at the currency.</p>
+</div>
+<div>
+<div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent-400);margin-bottom:22px">What the agent found, unprompted</div>
+<div style="border-top:1px solid color-mix(in srgb,#f8f4f4 25%,transparent);padding:16px 0;display:grid;grid-template-columns:30px 1fr;gap:14px">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:12px;color:var(--color-accent-400)">01</span>
+<span style="font-size:14.5px;line-height:1.6">Sampled the healthy orders: all USD, all settling within minutes.</span>
+</div>
+<div style="border-top:1px solid color-mix(in srgb,#f8f4f4 25%,transparent);padding:16px 0;display:grid;grid-template-columns:30px 1fr;gap:14px">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:12px;color:var(--color-accent-400)">02</span>
+<span style="font-size:14.5px;line-height:1.6">Noticed #301 is the only MXN order — and the only order not in a terminal state.</span>
+</div>
+<div style="border-top:1px solid color-mix(in srgb,#f8f4f4 25%,transparent);padding:16px 0;display:grid;grid-template-columns:30px 1fr;gap:14px">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:12px;color:var(--color-accent-400)">03</span>
+<span style="font-size:14.5px;line-height:1.6">Named the currency mismatch as the root cause, with high confidence.</span>
+</div>
+<div style="border-top:1px solid color-mix(in srgb,#f8f4f4 25%,transparent);border-bottom:1px solid color-mix(in srgb,#f8f4f4 25%,transparent);padding:16px 0;display:grid;grid-template-columns:30px 1fr;gap:14px">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:12px;color:var(--color-accent-400)">04</span>
+<span style="font-size:14.5px;line-height:1.6">Called the 50-order backlog a symptom of the pipeline's sequential design, not a second problem.</span>
+</div>
+</div>
+</div>
+</section>
+
+<section style="padding:76px 56px 80px;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:36px">
+<div>
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 12px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">The dashboard</h2>
+<p style="font-size:18px;line-height:1.5;margin:0;max-width:56ch;text-wrap:pretty">Three surfaces: pipeline health, the incident list, and each report in full — plus the raw record table, every row expandable to the timeline you would otherwise rebuild from logs.</p>
+</div>
+<a href="Tracewell%20Dashboard.dc.html" class="btn btn-primary" style="font-size:13px;flex:none">Open the dashboard →</a>
+</div>
+<div style="border:2px solid var(--color-divider);background:#181716;height:560px;overflow:hidden;position:relative">
+<iframe src="Tracewell%20Dashboard.dc.html" title="Tracewell dashboard" style="width:100%;height:800px;border:0;zoom:0.7;pointer-events:none"></iframe>
+</div>
+<div style="font-size:11.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">Live prototype of the overview screen · click through for incidents, reports and the order timeline</div>
+</section>
+
+<section style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid var(--color-divider)">
+<div style="padding:72px 48px 80px 56px">
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 26px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Why it's practical</h2>
+<div onClick="{{ why1 }}" style="cursor:pointer;border-top:1px solid var(--color-divider);padding:18px 0;display:grid;grid-template-columns:1fr 18px;gap:14px;align-items:center;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:16.5px">It catches what alerting misses</span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--color-accent);transition:transform .22s ease;transform:{{ w1rot }}">+</span>
+</div>
+<sc-if value="{{ w1 }}"><div style="font-size:14.5px;line-height:1.65;padding:0 0 20px;max-width:54ch;color:color-mix(in srgb,var(--color-text) 72%,transparent);animation:tl-open .35s ease both">Error-rate monitors are blind to a pipeline that stops making progress without failing. This targets that gap specifically.</div></sc-if>
+
+<div onClick="{{ why2 }}" style="cursor:pointer;border-top:1px solid var(--color-divider);padding:18px 0;display:grid;grid-template-columns:1fr 18px;gap:14px;align-items:center;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:16.5px">The expensive part is automated</span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--color-accent);transition:transform .22s ease;transform:{{ w2rot }}">+</span>
+</div>
+<sc-if value="{{ w2 }}"><div style="font-size:14.5px;line-height:1.65;padding:0 0 20px;max-width:54ch;color:color-mix(in srgb,var(--color-text) 72%,transparent);animation:tl-open .35s ease both">Anyone can write a query that says 51 orders are unsynced. Finding which one is the cause is the part that took days by hand.</div></sc-if>
+
+<div onClick="{{ why3 }}" style="cursor:pointer;border-top:1px solid var(--color-divider);padding:18px 0;display:grid;grid-template-columns:1fr 18px;gap:14px;align-items:center;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:16.5px">Cheap to run</span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--color-accent);transition:transform .22s ease;transform:{{ w3rot }}">+</span>
+</div>
+<sc-if value="{{ w3 }}"><div style="font-size:14.5px;line-height:1.65;padding:0 0 20px;max-width:54ch;color:color-mix(in srgb,var(--color-text) 72%,transparent);animation:tl-open .35s ease both">The scanner is plain SQL on a timer. The paid agent call only happens when something is actually flagged.</div></sc-if>
+
+<div onClick="{{ why4 }}" style="cursor:pointer;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);padding:18px 0;display:grid;grid-template-columns:1fr 18px;gap:14px;align-items:center;transition:background .18s ease" style-hover="background:color-mix(in srgb,var(--color-text) 4%,transparent)">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:16.5px">Built to extend</span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--color-accent);transition:transform .22s ease;transform:{{ w4rot }}">+</span>
+</div>
+<sc-if value="{{ w4 }}"><div style="font-size:14.5px;line-height:1.65;padding:18px 0 0;max-width:54ch;color:color-mix(in srgb,var(--color-text) 72%,transparent);animation:tl-open .35s ease both">Point DATABASE_URL at a read replica and adjust the schema and detectors to your columns. A new failure class is one new file; more agent context is one new tool.</div></sc-if>
+</div>
+<div style="padding:72px 56px 80px 48px;border-left:1px solid var(--color-divider)">
+<div onClick="{{ toggleScope }}" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px">
+<h2 style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;margin:0;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Deliberately out of scope · 5</h2>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--color-accent);transition:transform .22s ease;transform:{{ scopeRot }}">+</span>
+</div>
+<p style="font-size:14.5px;line-height:1.65;margin:0 0 22px;max-width:54ch;color:color-mix(in srgb,var(--color-text) 78%,transparent);text-wrap:pretty">Built to demonstrate the concept end to end, including a live, unscripted investigation. It does not run against production traffic, and the gaps are on purpose.</p>
+<sc-if value="{{ scopeOpen }}">
+<div style="display:flex;flex-direction:column;gap:14px;animation:tl-open .35s ease both">
+<div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No auth</strong> — the API and dashboard never leave localhost.</span></div>
+<div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No automated tests</strong> — verified against live scans and live agent runs. Production would need tests on detector thresholds and a recorded transcript for the tool loop.</span></div>
+<div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No cost guardrails</strong> beyond a 12-call cap per investigation.</span></div>
+<div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>No multi-instance coordination</strong> — two replicas would each scan; a real deployment needs an advisory lock.</span></div>
+<div style="display:grid;grid-template-columns:8px 1fr;gap:14px;align-items:start"><span style="width:8px;height:8px;background:var(--color-accent);margin-top:7px"></span><span style="font-size:14px;line-height:1.6"><strong>Polling, not push</strong> — fine at this scale, not at many concurrent viewers.</span></div>
+</div>
+</sc-if>
+</div>
+</section>
+
+<section style="background:var(--color-accent);color:#f3f2f2;padding:88px 56px 96px">
+<h2 style="font-size:52px;line-height:1.05;margin:0 0 32px;max-width:26ch">Run it locally in three commands.</h2>
+<div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;line-height:2;margin-bottom:40px">
+<div>export ANTHROPIC_API_KEY=sk-ant-…</div>
+<div>docker compose up --build -d postgres server web</div>
+<div>docker compose --profile seed run --rm --build seed</div>
+</div>
+<p style="font-size:15px;line-height:1.6;max-width:62ch;margin:0 0 40px;color:color-mix(in srgb,#f3f2f2 88%,transparent)">The backlog incident appears within a minute of seeding, with the agent's report following shortly after. Without an API key the scanner still detects and lists incidents — it just skips the investigation step.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<a href="Tracewell%20Dashboard.dc.html" style="display:inline-flex;align-items:center;padding:12px 20px;background:#f3f2f2;color:#201e1d;font-family:var(--font-heading);font-weight:800;font-size:14px">Open the dashboard →</a>
+<a href="https://github.com/Natey17/Tracewell" style="display:inline-flex;align-items:center;padding:12px 20px;border:1px solid #f3f2f2;color:#f3f2f2;font-family:var(--font-heading);font-weight:800;font-size:14px">View the repository</a>
+</div>
+</section>
+
+<footer style="padding:28px 56px;display:flex;gap:20px;align-items:center;font-size:12px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">
+<span style="margin-right:auto">Tracewell · MIT licensed</span>
+<a href="https://github.com/Natey17/Tracewell">github.com/Natey17/Tracewell</a>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;\&quot;light\&quot; | \&quot;dark\&quot;&quot;,&quot;section&quot;:&quot;Appearance&quot;}}">
+class Component extends DCLogic {
+  state = { theme: null, step: 1, manual: false, why: {}, scope: false };
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      if (this.state.manual) return clearInterval(this.timer);
+      this.setState(s => ({ step: s.step % 4 + 1 }));
+    }, 5200);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  pick(n) { return () => this.setState(s => ({ step: s.step === n ? 0 : n, manual: true })); }
+  why(n) { return () => this.setState(s => ({ why: { ...s.why, [n]: !s.why[n] } })); }
+
+  renderVals() {
+    const s = this.state;
+    const theme = s.theme ?? (this.props.theme ?? "dark");
+    const dim = "color-mix(in srgb,var(--color-text) 40%,transparent)";
+    const num = n => (s.step === n ? "var(--color-accent)" : dim);
+    const rot = on => (on ? "rotate(45deg)" : "none");
+    return {
+      theme,
+      themeGlyph: theme === "dark" ? "☀" : "☾",
+      toggleTheme: () => this.setState({ theme: theme === "dark" ? "light" : "dark" }),
+      stepHint: s.manual ? "click a step to read it" : "walking through · click to take over",
+      railPct: s.step ? s.step * 25 : 0,
+      step1: s.step === 1, step2: s.step === 2, step3: s.step === 3, step4: s.step === 4,
+      n1: num(1), n2: num(2), n3: num(3), n4: num(4),
+      pick1: this.pick(1), pick2: this.pick(2), pick3: this.pick(3), pick4: this.pick(4),
+      w1: !!s.why[1], w2: !!s.why[2], w3: !!s.why[3], w4: !!s.why[4],
+      w1rot: rot(s.why[1]), w2rot: rot(s.why[2]), w3rot: rot(s.why[3]), w4rot: rot(s.why[4]),
+      why1: this.why(1), why2: this.why(2), why3: this.why(3), why4: this.why(4),
+      scopeOpen: s.scope, scopeRot: rot(s.scope),
+      toggleScope: () => this.setState(st => ({ scope: !st.scope }))
+    };
+  }
+}
+</script>
+</body>
+</html>
