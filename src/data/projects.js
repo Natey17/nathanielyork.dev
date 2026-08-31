@@ -9,7 +9,7 @@ export const PROJECTS = [
     tags: ["JavaScript", "Node.js", "Amazon SP-API", "PWA"],
     // same-origin route — change to a full https:// URL if hosted elsewhere
     url: "/projects/nab-amp/",
-    github: null,
+    github: "https://github.com/Natey17/nab-amp-overview",
   },
   {
     id: "edgeine",
@@ -20,7 +20,7 @@ export const PROJECTS = [
       "Validating trading strategies against their own false positives. 258+ automated tests.",
     tags: ["Python", "scikit-learn", "LightGBM", "SQLAlchemy"],
     url: "/projects/edgeine/",
-    github: null,
+    github: "https://github.com/Natey17/edgeine-overview",
   },
   {
     id: "tracewell",
