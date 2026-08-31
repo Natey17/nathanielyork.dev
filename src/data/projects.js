@@ -8,7 +8,7 @@ export const PROJECTS = [
       "Live sourcing decisions, direct from the Amazon SP-API. In daily production use.",
     tags: ["JavaScript", "Node.js", "Amazon SP-API", "PWA"],
     // same-origin route — change to a full https:// URL if hosted elsewhere
-    url: "/projects/nab-amp",
+    url: "/projects/nab-amp/",
     github: null,
   },
   {
@@ -19,7 +19,7 @@ export const PROJECTS = [
     tagline:
       "Validating trading strategies against their own false positives. 258+ automated tests.",
     tags: ["Python", "scikit-learn", "LightGBM", "SQLAlchemy"],
-    url: "/projects/edgeine",
+    url: "/projects/edgeine/",
     github: null,
   },
   {
@@ -37,7 +37,7 @@ export const PROJECTS = [
       "Claude tool-use",
       "Docker Compose",
     ],
-    url: "/projects/tracewell",
+    url: "/projects/tracewell/",
     github: "https://github.com/Natey17/Tracewell",
   },
 ];
